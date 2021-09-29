@@ -1,0 +1,47 @@
+#Open API Specification
+
+# /signin
+
+# /signout
+
+# /account/:id
+# /account/:id
+# /account/:id
+
+# /posts
+# /posts/:postid
+# /posts/:postid
+
+# /posts/:postid/like
+# /posts/:postid/dislike
+# /posts/:postid/like
+# /posts/:postid/dislike
+# /posts/:postid/like
+# /posts/:postid/dislike
+
+# /comments/:postid
+# /comments/:postid/:commentid
+# /comments/:postid/:commentid
+
+
+# /comment/:postid/like
+# /comment/:postid/dislike
+# /comment/:postid/like
+# /comment/:postid/dislike
+
+# /posts/:postid/report
+
+# /comments/:commentid/report
+
+# /posts
+# /posts/:userid
+
+
+# /signup
+
+# /posts/:postid
+
+
+
+# /accounts
+# /accounts/:id
