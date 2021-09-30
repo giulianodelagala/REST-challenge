@@ -10,24 +10,276 @@ info:
   #   description: Optional server description, e.g. Main (production) server
   # - url: http://staging-api.example.com
   #   description: Optional server description, e.g. Internal staging server for testing
+
+# components
+components:
+
+  schemas:
+    RequestComment:
+      type: object
+      required:
+      - content
+      - is_published
+      - post_id
+      properties:
+        content:
+          type: string
+        is_published:
+          type: boolean
+        post_id:
+          type: integer
+
+    # NO HACE FALTA
+    # RequestLikeDislike:
+    #   type: object
+    #   required:
+    #   - is_like
+    #   properties:
+    #     post_id:
+    #       type: integer
+    #     is_like:
+    #       type: boolean
+
+    ResponseId:
+      type: object
+      description: 'Returns id '
+      required:
+      - id
+      properties:
+        id:
+          type: number
+
+    ResponsePost:
+      type : object
+      required:
+      - title
+      - content
+      - username
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        username:
+          type: string
+        updated_at:
+          type: string
+
+    ResponseUpdatePost:
+      type : object
+      required:
+      - title
+      - content
+      - is_published
+      - updated_at
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        is_published:
+          type: boolean
+        updated_at:
+          type: string
+
+    ErrorNotLogedIn:
+      type: object
+      description: Error Not logged in
+      required:
+      - title
+      - message
+      - status
+      properties:
+        title:
+          default: Error
+        message:
+          default: "You are not authorized to create a post, please login"
+        status:
+          default: 403
+
+    ErrorInvalidId:
+      type: object
+      description: Error Invalid Id
+      required:
+      - title
+      - message
+      - status
+      properties:
+        title:
+          default: Error
+        message:
+          default: "The id is invalid"
+        status:
+          default: 400
+
+    ErrorNotAuthorized:
+      type: object
+      description: Error Not Authorized
+      required:
+      - title
+      - message
+      - status
+      properties:
+        title:
+          default: Error
+        message:
+          default: "You are not authorized"
+        status:
+          default: 403
+
+    ErrorNotFound:
+      type: object
+      description: Error Resource not found
+      required:
+      - title
+      - message
+      - status
+      properties:
+        title:
+          default: Error
+        message:
+          default: "The Resource id not found"
+        status:
+          default: 404
+
 paths:
-  # /users:
-  #   get:
-  #     summary: Returns a list of users.
-  #     description: Optional extended description in CommonMark or HTML.
-  #     responses:
-  #       '200':    # status code
-  #         description: A JSON array of user names
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: array
-  #               items:
-  #                 type: string
+# /login
+  /login:
+    post:
+      summary: Log in
+      requestBody:
+          description: User credentials
+          required: true
+          content:
+            application/json:
+              schema:
+                required:
+                - username
+                - password
+                properties:
+                  username:
+                    type: string
+                    example: 'ragnar'
+                  password:
+                    type: string
+                    example: 'password123'
+      responses:
+        "200":
+          description: "You are succesful logged in"
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Return token
+                required:
+                - user_id
+                - token
+                properties:
+                  user_id:
+                    type: number
+                  token:
+                    type: string
+        "403":
+          description: "Your username or password are incorrect"
+          content:
+            application/json:
+              schema:
+                type: object
+                description: username or password are incorrect
+                required:
+                - title
+                - message
+                - status
+                properties:
+                  title:
+                    default: Error
+                  message:
+                    default: "username or password are incorrect"
+                  status:
+                    default: 403
+# /logout
+  /logout:
+    get:
+      summary: Log out
 
-# /signin
+      responses:
+        "200":
+          description: "You are logged out"
+          content: {}
+        "403":
+          description: "You are not logged in"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotLogedIn'
 
-# /signout
+# signup
+  /signup:
+    post:
+      summary: Create account
+      requestBody:
+          description: User data and credentials
+          required: true
+          content:
+            application/json:
+              schema:
+                required:
+                - username
+                - password
+                - email
+                properties:
+                  username:
+                    type: string
+                    example: 'ragnar'
+                  password:
+                    type: string
+                    example: 'password123'
+                  email:
+                    type: string
+                    example: 'ragnar@ravn.co'
+                  name:
+                    type: string
+                    example: 'Odin'
+                  is_name_public:
+                    type: boolean
+                    default: true
+                  is_email_public:
+                    type: boolean
+                    default: true
+      responses:
+        "200":
+          description: "Succesful registration"
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Return Id
+                required:
+                - user_id
+                properties:
+                  user_id:
+                    type: number
+        "403":
+          description: "Your data are incorrect"
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Incorrect data
+                required:
+                - title
+                - message
+                - status
+                properties:
+                  title:
+                    default: Error
+                  message:
+                    default: "data are incorrect"
+                  status:
+                    default: 403
+        "500":
+          description: "Server Error"
+
 # /accounts
   /accounts:
     get:
@@ -35,139 +287,731 @@ paths:
       responses:
         "200":
           description: "succesful operation"
-    post:
-      summary: Create post
-      responses:
-        "200":
-          description: "post created"
-
-
-# /accounts/:id
-# /account/:id
-# /account/:id
-# /account/:id
-
-# /posts
-  /posts:
+        "403":
+          description: "You are not authorized"
+  /accounts/{postid}:
     get:
-      summary: Returns a list of published posts
-      responses:
-        "200":
-          description: "succesful operation"
-    post:
-      summary: Create post
-      responses:
-        "200":
-          description: "post created"
+      summary: Returns a single account info
 
-  /posts/{postid}:
-    get:
-      summary: Returns a single post
+      parameters:
+      - in: path
+        name: postid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
+
       responses:
         "200":
           description: "succesful operation"
         "400":
           description: "invalid id"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidId'
+        "403":
+          description: "You are not authorized"
         "404":
-          description: "post not found"
+          description: "account not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
     put:
-      summary: Update an existing post
+      summary: Update an existing account
+
+      parameters:
+      - in: path
+        name: postid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
+
       responses:
         "200":
           description: "succesful update"
         "400":
           description: "invalid id"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidId'
+        "403":
+          description: "You are not authorized to update this account"
         "404":
-          description: "post not found"
+          description: "account not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
     delete:
-      summary: Delete an existing post
+      summary: Delete an existing account
+
+      parameters:
+      - in: path
+        name: postid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
+
       responses:
         "200":
           description: "succesful delete"
         "400":
           description: "invalid id"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidId'
+        "403":
+          description: "You are not authorized to delete this account"
+        "404":
+          description: "account not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+
+# /posts
+  /posts:
+    get:
+      summary: Returns a list of published posts
+      parameters:
+        - name: username
+          description: an optional user name of an account
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "succesful operation"
+          content:
+            application/json:
+              schema:
+                type: array
+                description: Array of posts
+                items:
+                  $ref: '#/components/schemas/ResponsePost'
+        "404":
+          description: "account not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+    post:
+      summary: Create post
+      requestBody:
+        description: Post object to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+              - title
+              - content
+              - is_published
+              properties:
+                title:
+                  type: string
+                  example: 'Nuevo Post'
+                content:
+                  type: string
+                  example: 'Nuevo Contenido'
+                is_published:
+                  type: boolean
+                  example: true
+      responses:
+        "200":
+          description: "post created"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseId'
+        "403":
+          description: "You are not authorized to create a post, please login"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotLogedIn'
+
+  /posts/{postid}:
+    get:
+      summary: Returns a single post
+
+      parameters:
+      - in: path
+        name: postid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
+
+      responses:
+        "200":
+          description: "succesful operation"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponsePost'
+        "400":
+          description: "invalid id"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidId'
         "404":
           description: "post not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+    put:
+      summary: Update an existing post
+
+      parameters:
+      - in: path
+        name: postid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
+
+      responses:
+        "200":
+          description: "succesful update"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseUpdatePost'
+        "400":
+          description: "invalid id"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidId'
+        "403":
+          description: "You are not authorized to update this post"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotAuthorized'
+        "404":
+          description: "post not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+    delete:
+      summary: Delete an existing post
+      responses:
+        "200":
+          description: "succesful delete"
+          content: {}
+        "400":
+          description: "invalid id"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidId'
+        "403":
+          description: "You are not authorized to delete this post"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotAuthorized'
+        "404":
+          description: "post not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
 
   /posts/{postid}/like:
     post:
       summary: Give "like" to a post
+
+      parameters:
+      - in: path
+        name: postid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
+
       responses:
         "200":
           description: "succesful operation"
+          content: {}
         "400":
           description: "invalid id"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidId'
+        "403":
+          description: "You are not authorized, please log in"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotLogedIn'
         "404":
           description: "post not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
     delete:
       summary: Remove "like" to a post
+
+      parameters:
+      - in: path
+        name: postid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
+
       responses:
         "200":
           description: "succesful operation"
+          content: {}
         "400":
           description: "invalid id"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidId'
+        "403":
+          description: "You are not authorized, please log in"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotLogedIn'
         "404":
           description: "post not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
 
   /posts/{postid}/dislike:
     post:
       summary: Give "dislike" to a post
+
+      parameters:
+      - in: path
+        name: postid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
+
       responses:
         "200":
           description: "succesful operation"
         "400":
           description: "invalid id"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidId'
+        "403":
+          description: "You are not authorized, please log in"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotLogedIn'
         "404":
           description: "post not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
     delete:
       summary: Remove "dislike" to a post
+
+      parameters:
+      - in: path
+        name: postid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
+
       responses:
         "200":
           description: "succesful operation"
         "400":
           description: "invalid id"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidId'
+        "403":
+          description: "You are not authorized, please log in"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotLogedIn'
         "404":
           description: "post not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
 
   /posts/{postid}/report:
     post:
       summary: Report a post
+
+      parameters:
+      - in: path
+        name: postid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
+
       responses:
         "200":
           description: "succesful operation"
+          content: {}
         "400":
           description: "invalid id"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidId'
+        "403":
+          description: "You are not authorized, please log in"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotLogedIn'
         "404":
           description: "post not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
     delete:
       summary: Remove report status to a post
+
+      parameters:
+      - in: path
+        name: postid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
+
       responses:
         "200":
           description: "succesful operation"
+          content: {}
         "400":
           description: "invalid id"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidId'
+        "403":
+          description: "You are not authorized, please log in"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotLogedIn'
         "404":
           description: "post not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
 
-# /comments/:postid
-# /comments/:postid/:commentid
-# /comments/:postid/:commentid
+  # comments
+  /comments/{postid}:
+    post:
+      summary: Create a comment or draft
 
+      parameters:
+      - in: path
+        name: postid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
 
-# /comment/:postid/like
-# /comment/:postid/dislike
-# /comment/:postid/like
-# /comment/:postid/dislike
+      requestBody:
+        description: comment send from client
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestComment'
+          text/plain:
+            schema:
+              type: string
 
-# /comments/:commentid/report
+      responses:
+        '200':
+          description: 'succesful operation'
+        '400':
+          description: 'invalid id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidId'
+        "403":
+          description: "You are not authorized, please log in"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotLogedIn'
+        '404':
+          description: 'post not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
 
-# /posts
-# /posts/:userid
+  /comments/{postid}/{commentid}:
+    put:
+      summary: Update an existing comment
 
+      parameters:
+      - in: path
+        name: postid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
 
-# /signup
+      responses:
+        '200':
+          description: 'succesful update'
+        '400':
+          description: 'invalid id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidId'
+        "403":
+          description: "You are not authorized to update this comment"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotAuthorized'
+        '404':
+          description: 'comment not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+    delete:
+      summary: Delete an existing comment
 
-# /posts/:postid
+      responses:
+        '200':
+          description: 'succesful update'
+        '400':
+          description: 'invalid id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidId'
+        "403":
+          description: "You are not authorized to delete this comment"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotAuthorized'
+        '404':
+          description: 'comment not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+
+  /comments/{postid}/like:
+    post:
+      summary: Give "like" to a comment
+
+      parameters:
+      - in: path
+        name: postid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
+
+      requestBody:
+        description: update comment with new comment
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestComment'
+          text/plain:
+            schema:
+              type: string
+
+      responses:
+        '200':
+          description: 'succesful operation'
+        '400':
+          description: 'invalid id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidId'
+        "403":
+          description: "You are not authorized, please log in"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotLogedIn'
+        '404':
+          description: 'comment not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+    delete:
+      summary: Remove "like" to a comment
+
+      parameters:
+      - in: path
+        name: postid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
+
+      responses:
+        '200':
+          description: 'succesful operation'
+        '400':
+          description: 'invalid id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidId'
+        "403":
+          description: "You are not authorized, please log in"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotLogedIn'
+        '404':
+          description: 'comment not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+
+  /comments/{postid}/dislike:
+    post:
+      summary: Give "dislike" to a comment
+
+      parameters:
+      - in: path
+        name: postid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
+
+      responses:
+        '200':
+          description: 'succesful operation'
+        '400':
+          description: 'invalid id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidId'
+        "403":
+          description: "You are not authorized, please log in"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotLogedIn'
+        '404':
+          description: 'comment not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+    delete:
+      summary: Remove "dislike" to a comment
+
+      parameters:
+      - in: path
+        name: postid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
+
+      responses:
+        '200':
+          description: 'succesful operation'
+        '400':
+          description: 'invalid id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidId'
+        "403":
+          description: "You are not authorized"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotAuthorized'
+        '404':
+          description: 'comment not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+
+  /comments/{commentid}/report:
+    post:
+      summary: Report a comment
+
+      parameters:
+      - in: path
+        name: commentid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
+
+      responses:
+        '200':
+          description: 'succesful operation'
+        '400':
+          description: 'invalid id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidId'
+        "403":
+          description: "You are not authorized, please log in"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotLogedIn'
+        '404':
+          description: 'comment not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
 
 
 
