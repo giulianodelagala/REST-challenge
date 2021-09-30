@@ -6,10 +6,10 @@ info:
   description: REST API for the RAVN REST challenge
   version: 0.0.1
 # servers:
-  # - url: http://api.example.com/v1
-  #   description: Optional server description, e.g. Main (production) server
-  # - url: http://staging-api.example.com
-  #   description: Optional server description, e.g. Internal staging server for testing
+# - url: http://api.example.com/v1
+#   description: Optional server description, e.g. Main (production) server
+# - url: http://staging-api.example.com
+#   description: Optional server description, e.g. Internal staging server for testing
 paths:
   # /users:
   #   get:
@@ -25,109 +25,188 @@ paths:
   #               items:
   #                 type: string
 
-# /signin
+  # /signin
 
-# /signout
+  # /signout
 
-# /account/:id
-# /account/:id
-# /account/:id
+  # /account/:id
+  # /account/:id
+  # /account/:id
 
-# /posts
+  # /posts
   /posts:
     get:
       summary: Returns a list of published posts
       responses:
-        "200":
-          description: "succesful operation"
+        '200':
+          description: 'succesful operation'
     post:
       summary: Create post
       responses:
-        "200":
-          description: "post created"
+        '200':
+          description: 'post created'
 
   /posts/{postid}:
     get:
       summary: Returns a single post
       responses:
-        "200":
-          description: "succesful operation"
-        "400":
-          description: "invalid id"
-        "404":
-          description: "post not found"
+        '200':
+          description: 'succesful operation'
+        '400':
+          description: 'invalid id'
+        '404':
+          description: 'post not found'
     put:
       summary: Update an existing post
       responses:
-        "200":
-          description: "succesful update"
-        "400":
-          description: "invalid id"
-        "404":
-          description: "post not found"
+        '200':
+          description: 'succesful update'
+        '400':
+          description: 'invalid id'
+        '404':
+          description: 'post not found'
     delete:
       summary: Delete an existing post
       responses:
-        "200":
-          description: "succesful delete"
-        "400":
-          description: "invalid id"
-        "404":
-          description: "post not found"
+        '200':
+          description: 'succesful delete'
+        '400':
+          description: 'invalid id'
+        '404':
+          description: 'post not found'
 
   /posts/{postid}/like:
     post:
       summary: Give "like" to a post
       responses:
-        "200":
-          description: "succesful operation"
-        "400":
-          description: "invalid id"
-        "404":
-          description: "post not found"
+        '200':
+          description: 'succesful operation'
+        '400':
+          description: 'invalid id'
+        '404':
+          description: 'post not found'
     delete:
       summary: Remove "like" to a post
       responses:
-        "200":
-          description: "succesful operation"
-        "400":
-          description: "invalid id"
-        "404":
-          description: "post not found"
+        '200':
+          description: 'succesful operation'
+        '400':
+          description: 'invalid id'
+        '404':
+          description: 'post not found'
 
   /posts/{postid}/dislike:
     post:
       summary: Give "dislike" to a post
       responses:
-        "200":
-          description: "succesful operation"
-        "400":
-          description: "invalid id"
-        "404":
-          description: "post not found"
+        '200':
+          description: 'succesful operation'
+        '400':
+          description: 'invalid id'
+        '404':
+          description: 'post not found'
     delete:
       summary: Remove "dislike" to a post
       responses:
-        "200":
-          description: "succesful operation"
-        "400":
-          description: "invalid id"
-        "404":
-          description: "post not found"
+        '200':
+          description: 'succesful operation'
+        '400':
+          description: 'invalid id'
+        '404':
+          description: 'post not found'
 
+# /posts/:postid/like
+# /posts/:postid/dislike
+# /posts/:postid/like
+# /posts/:postid/dislike
+# /posts/:postid/like
+# /posts/:postid/dislike
 
-# /posts/:postid/like
-# /posts/:postid/dislike
-# /posts/:postid/like
-# /posts/:postid/dislike
-# /posts/:postid/like
-# /posts/:postid/dislike
+/comments/{postid}:
+  post:
+    summary: Create a comment or draft
+    responses:
+      '200':
+        description: 'succesful operation'
+      '400':
+        description: 'invalid id'
+      '404':
+        description: 'post not found'
+
+/comments/{postid}/{commentid}:
+  put:
+    summary: Update an existing comment
+    responses:
+      '200':
+        description: 'succesful update'
+      '400':
+        description: 'invalid id'
+      '404':
+        description: 'comment not found'
+  delete:
+    summary: Delete an existing comment
+    responses:
+      '200':
+        description: 'succesful update'
+      '400':
+        description: 'invalid id'
+      '404':
+        description: 'comment not found'
+
+/comments/{postid}/like:
+  post:
+    summary: Give "like" to a comment
+    responses:
+      '200':
+        description: 'succesful operation'
+      '400':
+        description: 'invalid id'
+      '404':
+        description: 'comment not found'
+  delete:
+    summary: Remove "like" to a comment
+    responses:
+      '200':
+        description: 'succesful operation'
+      '400':
+        description: 'invalid id'
+      '404':
+        description: 'comment not found'
+
+/comments/{postid}/dislike:
+  post:
+    summary: Give "dislike" to a comment
+    responses:
+      '200':
+        description: 'succesful operation'
+      '400':
+        description: 'invalid id'
+      '404':
+        description: 'comment not found'
+  delete:
+    summary: Remove "dislike" to a comment
+    responses:
+      '200':
+        description: 'succesful operation'
+      '400':
+        description: 'invalid id'
+      '404':
+        description: 'comment not found'
+
+/comments/{commentid}/report:
+  post:
+      summary: Report a comment
+      responses:
+        '200':
+          description: 'succesful operation'
+        '400':
+          description: 'invalid id'
+        '404':
+          description: 'comment not found'
 
 # /comments/:postid
 # /comments/:postid/:commentid
 # /comments/:postid/:commentid
-
-
 # /comment/:postid/like
 # /comment/:postid/dislike
 # /comment/:postid/like
@@ -140,12 +219,9 @@ paths:
 # /posts
 # /posts/:userid
 
-
 # /signup
 
 # /posts/:postid
-
-
 
 # /accounts
 # /accounts/:id
