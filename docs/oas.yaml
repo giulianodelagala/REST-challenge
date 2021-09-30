@@ -28,7 +28,21 @@ paths:
 # /signin
 
 # /signout
+# /accounts
+  /accounts:
+    get:
+      summary: Returns a list of accounts
+      responses:
+        "200":
+          description: "succesful operation"
+    post:
+      summary: Create post
+      responses:
+        "200":
+          description: "post created"
 
+
+# /accounts/:id
 # /account/:id
 # /account/:id
 # /account/:id
@@ -115,13 +129,25 @@ paths:
         "404":
           description: "post not found"
 
-
-# /posts/:postid/like
-# /posts/:postid/dislike
-# /posts/:postid/like
-# /posts/:postid/dislike
-# /posts/:postid/like
-# /posts/:postid/dislike
+  /posts/{postid}/report:
+    post:
+      summary: Report a post
+      responses:
+        "200":
+          description: "succesful operation"
+        "400":
+          description: "invalid id"
+        "404":
+          description: "post not found"
+    delete:
+      summary: Remove report status to a post
+      responses:
+        "200":
+          description: "succesful operation"
+        "400":
+          description: "invalid id"
+        "404":
+          description: "post not found"
 
 # /comments/:postid
 # /comments/:postid/:commentid
@@ -132,8 +158,6 @@ paths:
 # /comment/:postid/dislike
 # /comment/:postid/like
 # /comment/:postid/dislike
-
-# /posts/:postid/report
 
 # /comments/:commentid/report
 
@@ -147,5 +171,3 @@ paths:
 
 
 
-# /accounts
-# /accounts/:id
