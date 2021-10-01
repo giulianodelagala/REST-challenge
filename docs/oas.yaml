@@ -65,6 +65,23 @@ components:
         updated_at:
           type: string
 
+    ResponseAccount:
+      type : object
+      required:
+      - id
+      - username
+      - email_verified_at
+      - role
+      properties:
+        id:
+          type: string
+        user:
+          type: string
+        email_verified_at:
+          type: string
+        role:
+          type: string
+
     ResponseUpdatePost:
       type : object
       required:
@@ -146,6 +163,8 @@ paths:
 # /login
   /login:
     post:
+      tags:
+        - "Access"
       summary: Log in
       requestBody:
           description: User credentials
@@ -200,8 +219,9 @@ paths:
 # /logout
   /logout:
     get:
+      tags:
+          - "Access"
       summary: Log out
-
       responses:
         "200":
           description: "You are logged out"
@@ -216,6 +236,8 @@ paths:
 # signup
   /signup:
     post:
+      tags:
+          - "Account"
       summary: Create account
       requestBody:
           description: User data and credentials
@@ -247,7 +269,7 @@ paths:
                     type: boolean
                     default: true
       responses:
-        "200":
+        "201":
           description: "Succesful registration"
           content:
             application/json:
@@ -256,9 +278,28 @@ paths:
                 description: Return Id
                 required:
                 - user_id
+                - username
+                - password
+                - email
                 properties:
-                  user_id:
-                    type: number
+                  username:
+                    type: string
+                    example: 'ragnar'
+                  password:
+                    type: string
+                    example: 'password123'
+                  email:
+                    type: string
+                    example: 'ragnar@ravn.co'
+                  name:
+                    type: string
+                    example: 'Odin'
+                  is_name_public:
+                    type: boolean
+                    default: true
+                  is_email_public:
+                    type: boolean
+                    default: true
         "403":
           description: "Your data are incorrect"
           content:
@@ -283,14 +324,29 @@ paths:
 # /accounts
   /accounts:
     get:
+      tags:
+        - "Account"
       summary: Returns a list of accounts
       responses:
         "200":
           description: "succesful operation"
+          content:
+            application/json:
+              schema:
+                type: array
+                description: Array of posts
+                items:
+                  $ref: '#/components/schemas/ResponseAccount'
         "403":
           description: "You are not authorized"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotAuthorized'
   /accounts/{postid}:
     get:
+      tags:
+        - "Account"
       summary: Returns a single account info
 
       parameters:
@@ -304,6 +360,13 @@ paths:
       responses:
         "200":
           description: "succesful operation"
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Account info
+                items:
+                  $ref: '#/components/schemas/ResponseAccount'
         "400":
           description: "invalid id"
           content:
@@ -312,6 +375,10 @@ paths:
                 $ref: '#/components/schemas/ErrorInvalidId'
         "403":
           description: "You are not authorized"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotAuthorized'
         "404":
           description: "account not found"
           content:
@@ -319,6 +386,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorNotFound'
     put:
+      tags:
+        - "Account"
       summary: Update an existing account
 
       parameters:
@@ -347,6 +416,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorNotFound'
     delete:
+      tags:
+        - "Account"
       summary: Delete an existing account
 
       parameters:
@@ -378,6 +449,8 @@ paths:
 # /posts
   /posts:
     get:
+      tags:
+        - "Post"
       summary: Returns a list of published posts
       parameters:
         - name: username
@@ -403,6 +476,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorNotFound'
     post:
+      tags:
+        - "Post"
       summary: Create post
       requestBody:
         description: Post object to be created
@@ -440,6 +515,8 @@ paths:
 
   /posts/{postid}:
     get:
+      tags:
+        - "Post"
       summary: Returns a single post
 
       parameters:
@@ -470,6 +547,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorNotFound'
     put:
+      tags:
+        - "Post"
       summary: Update an existing post
 
       parameters:
@@ -506,6 +585,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorNotFound'
     delete:
+      tags:
+        - "Post"
       summary: Delete an existing post
       responses:
         "200":
@@ -532,6 +613,8 @@ paths:
 
   /posts/{postid}/like:
     post:
+      tags:
+        - "Likes"
       summary: Give "like" to a post
 
       parameters:
@@ -565,6 +648,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorNotFound'
     delete:
+      tags:
+        - "Likes"
       summary: Remove "like" to a post
 
       parameters:
@@ -600,6 +685,8 @@ paths:
 
   /posts/{postid}/dislike:
     post:
+      tags:
+        - "Likes"
       summary: Give "dislike" to a post
 
       parameters:
@@ -632,6 +719,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorNotFound'
     delete:
+      tags:
+        - "Likes"
       summary: Remove "dislike" to a post
 
       parameters:
@@ -666,6 +755,8 @@ paths:
 
   /posts/{postid}/report:
     post:
+      tags:
+        - "Reporting"
       summary: Report a post
 
       parameters:
@@ -699,6 +790,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorNotFound'
     delete:
+      tags:
+        - "Reporting"
       summary: Remove report status to a post
 
       parameters:
@@ -735,6 +828,8 @@ paths:
   # comments
   /comments/{postid}:
     post:
+      tags:
+        - "Comment"
       summary: Create a comment or draft
 
       parameters:
@@ -780,6 +875,8 @@ paths:
 
   /comments/{postid}/{commentid}:
     put:
+      tags:
+          - "Comment"
       summary: Update an existing comment
 
       parameters:
@@ -812,6 +909,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorNotFound'
     delete:
+      tags:
+        - "Comment"
       summary: Delete an existing comment
 
       responses:
@@ -838,6 +937,8 @@ paths:
 
   /comments/{postid}/like:
     post:
+      tags:
+        - "Likes"
       summary: Give "like" to a comment
 
       parameters:
@@ -881,6 +982,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorNotFound'
     delete:
+      tags:
+        - "Likes"
       summary: Remove "like" to a comment
 
       parameters:
@@ -915,6 +1018,8 @@ paths:
 
   /comments/{postid}/dislike:
     post:
+      tags:
+        - "Likes"
       summary: Give "dislike" to a comment
 
       parameters:
@@ -947,6 +1052,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorNotFound'
     delete:
+      tags:
+        - "Likes"
       summary: Remove "dislike" to a comment
 
       parameters:
@@ -981,6 +1088,8 @@ paths:
 
   /comments/{commentid}/report:
     post:
+      tags:
+        - "Reporting"
       summary: Report a comment
 
       parameters:
