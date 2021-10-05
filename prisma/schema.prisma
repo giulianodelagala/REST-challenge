@@ -60,11 +60,13 @@ model Comments {
 model Reports {
   id        Int         @id @default(autoincrement())
   content   String
-  postOrCommentId Int   @map("post_comment_id")
+  isPublished Boolean   @default(false) @map("is_published")
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime  @updatedAt @map("updated_at")
   user        Users     @relation(fields: [userId], references: [id])
   userId      Int       @map("user_id")
+  postOrCommentId Int   @map("post_comment_id")
+  publishingType  PublishingType
 }
 
 model LikePost {
@@ -73,8 +75,8 @@ model LikePost {
   createdAt     DateTime   @default(now())  @map("created_at")
   user          Users     @relation(fields: [userId], references: [id])
   userId        Int        @map("user_id")
-  postCommentId Int             @map("post_comment_id")
-  type          PublishingType
+  postOrCommentId Int             @map("post_comment_id")
+  publishingType  PublishingType
 }
 
 enum Role {
