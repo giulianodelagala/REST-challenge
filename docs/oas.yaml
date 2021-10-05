@@ -15,6 +15,11 @@ info:
 components:
 
   schemas:
+    # Data:
+    #   type: object
+    #   required:
+    #   - data
+
     RequestComment:
       type: object
       required:
@@ -28,17 +33,37 @@ components:
           type: boolean
         post_id:
           type: integer
+          example: 123
 
-    # NO HACE FALTA
-    # RequestLikeDislike:
-    #   type: object
-    #   required:
-    #   - is_like
-    #   properties:
-    #     post_id:
-    #       type: integer
-    #     is_like:
-    #       type: boolean
+    RequestReportPost:
+      type: object
+      required:
+      - content
+      - is_published
+      - post_id
+      properties:
+        content:
+          type: string
+        is_published:
+          type: boolean
+        post_id:
+          type: integer
+          example: 123
+
+    RequestReportComment:
+      type: object
+      required:
+      - content
+      - is_published
+      - post_id
+      properties:
+        content:
+          type: string
+        is_published:
+          type: boolean
+        comment_id:
+          type: integer
+          example: 123
 
     ResponseId:
       type: object
@@ -164,7 +189,7 @@ paths:
   /login:
     post:
       tags:
-        - "Access"
+        - "Auth"
       summary: Log in
       requestBody:
           description: User credentials
@@ -189,15 +214,20 @@ paths:
             application/json:
               schema:
                 type: object
-                description: Return token
                 required:
-                - user_id
-                - token
+                - data
                 properties:
-                  user_id:
-                    type: number
-                  token:
-                    type: string
+                  data:
+                    type: object
+                    description: Return token
+                    required:
+                    - user_id
+                    - token
+                    properties:
+                      user_id:
+                        type: number
+                      token:
+                        type: string
         "403":
           description: "Your username or password are incorrect"
           content:
@@ -218,9 +248,9 @@ paths:
                     default: 403
 # /logout
   /logout:
-    get:
+    delete:
       tags:
-          - "Access"
+          - "Auth"
       summary: Log out
       responses:
         "200":
@@ -245,6 +275,7 @@ paths:
           content:
             application/json:
               schema:
+                type: object
                 required:
                 - username
                 - password
@@ -275,31 +306,37 @@ paths:
             application/json:
               schema:
                 type: object
-                description: Return Id
+                description: Return Registration data
                 required:
-                - user_id
-                - username
-                - password
-                - email
+                - data
                 properties:
-                  username:
-                    type: string
-                    example: 'ragnar'
-                  password:
-                    type: string
-                    example: 'password123'
-                  email:
-                    type: string
-                    example: 'ragnar@ravn.co'
-                  name:
-                    type: string
-                    example: 'Odin'
-                  is_name_public:
-                    type: boolean
-                    default: true
-                  is_email_public:
-                    type: boolean
-                    default: true
+                  data:
+                    type: object
+                    description: Return token
+                    required:
+                    - user_id
+                    - username
+                    - password
+                    - email
+                    properties:
+                      username:
+                        type: string
+                        example: 'ragnar'
+                      password:
+                        type: string
+                        example: 'password123'
+                      email:
+                        type: string
+                        example: 'ragnar@ravn.co'
+                      name:
+                        type: string
+                        example: 'Odin'
+                      is_name_public:
+                        type: boolean
+                        default: true
+                      is_email_public:
+                        type: boolean
+                        default: true
         "403":
           description: "Your data are incorrect"
           content:
@@ -333,17 +370,23 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                description: Array of posts
-                items:
-                  $ref: '#/components/schemas/ResponseAccount'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: array
+                    description: Array of posts
+                    items:
+                      $ref: '#/components/schemas/ResponseAccount'
         "403":
           description: "You are not authorized"
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorNotAuthorized'
-  /accounts/{postid}:
+
+  /accounts/{accountid}:
     get:
       tags:
         - "Account"
@@ -351,7 +394,7 @@ paths:
 
       parameters:
       - in: path
-        name: postid
+        name: accountid
         schema:
           type: integer
         required: true
@@ -364,9 +407,13 @@ paths:
             application/json:
               schema:
                 type: object
-                description: Account info
-                items:
-                  $ref: '#/components/schemas/ResponseAccount'
+                required:
+                - data
+                properties:
+                  data:
+                    type: object
+                    description: Account info
+                    $ref: '#/components/schemas/ResponseAccount'
         "400":
           description: "invalid id"
           content:
@@ -392,15 +439,56 @@ paths:
 
       parameters:
       - in: path
-        name: postid
+        name: accountid
         schema:
           type: integer
         required: true
         description: Numeric ID
 
+      requestBody:
+          description: User data and credentials
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - username
+                - password
+                properties:
+                  username:
+                    type: string
+                    example: 'ragnar'
+                  password:
+                    type: string
+                    example: 'password123'
+                  email:
+                    type: string
+                    example: 'ragnar@ravn.co'
+                  name:
+                    type: string
+                    example: 'Odin'
+                  is_name_public:
+                    type: boolean
+                    default: true
+                  is_email_public:
+                    type: boolean
+                    default: true
+
       responses:
         "200":
           description: "succesful update"
+          content:
+            application/json:
+                schema:
+                  type: object
+                  required:
+                  - data
+                  properties:
+                    data:
+                      type: object
+                      description: Account info
+                      $ref: '#/components/schemas/ResponseAccount'
         "400":
           description: "invalid id"
           content:
@@ -422,7 +510,7 @@ paths:
 
       parameters:
       - in: path
-        name: postid
+        name: accountid
         schema:
           type: integer
         required: true
@@ -431,6 +519,17 @@ paths:
       responses:
         "200":
           description: "succesful delete"
+          content:
+            application/json:
+                schema:
+                  type: object
+                  required:
+                  - data
+                  properties:
+                    data:
+                      type: object
+                      description: Account info
+                      $ref: '#/components/schemas/ResponseAccount'
         "400":
           description: "invalid id"
           content:
@@ -439,6 +538,222 @@ paths:
                 $ref: '#/components/schemas/ErrorInvalidId'
         "403":
           description: "You are not authorized to delete this account"
+        "404":
+          description: "account not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+
+  # accounts/me/posts
+  /accounts/me/posts:
+    get:
+      tags:
+        - "Post"
+      summary: Returns a list of posts of user logged
+
+      responses:
+        "200":
+          description: "succesful operation"
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: array
+                    description: Array of posts
+                    items:
+                      $ref: '#/components/schemas/ResponsePost'
+        "404":
+          description: "account not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+
+  /accounts/me/posts/{postid}:
+    get:
+      tags:
+        - "Post"
+      summary: Returns a specific post of user logged
+
+      parameters:
+      - in: path
+        name: postid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
+
+      responses:
+        "200":
+          description: "succesful operation"
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ResponsePost'
+        "404":
+          description: "account not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+
+  /accounts/me/posts/{postid}/comments:
+    get:
+      tags:
+        - "Comment"
+      summary: Returns all published comments of a specific posts of me
+
+      parameters:
+      - in: path
+        name: postid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
+
+      responses:
+        "200":
+          description: "succesful operation"
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: array
+                    description: Array of posts
+                    items:
+                      $ref: '#/components/schemas/ResponsePost'
+        "404":
+          description: "account not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+
+  # manage account
+  /accounts/{accountid}/posts:
+    get:
+      tags:
+        - "Post"
+      summary: Returns published all posts of a user
+
+      parameters:
+      - in: path
+        name: accountid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
+
+      responses:
+        "200":
+          description: "succesful operation"
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: array
+                    description: Array of posts
+                    items:
+                      $ref: '#/components/schemas/ResponsePost'
+        "404":
+          description: "account not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+
+  /accounts/{accountid}/posts/{postid}:
+    get:
+      tags:
+        - "Post"
+      summary: Returns published specific posts of a user
+
+      parameters:
+      - in: path
+        name: accountid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
+      - in: path
+        name: postid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
+
+      responses:
+        "200":
+          description: "succesful operation"
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ResponsePost'
+        "404":
+          description: "account not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+
+  /accounts/{accountid}/posts/{postid}/comments:
+    get:
+      tags:
+        - "Comment"
+      summary: Returns all published comments of a specific posts of a user
+
+      parameters:
+      - in: path
+        name: accountid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
+      - in: path
+        name: postid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
+
+      responses:
+        "200":
+          description: "succesful operation"
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: array
+                    description: Array of posts
+                    items:
+                      $ref: '#/components/schemas/ResponsePost'
         "404":
           description: "account not found"
           content:
@@ -465,10 +780,15 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                description: Array of posts
-                items:
-                  $ref: '#/components/schemas/ResponsePost'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: array
+                    description: Array of posts
+                    items:
+                      $ref: '#/components/schemas/ResponsePost'
         "404":
           description: "account not found"
           content:
@@ -505,7 +825,30 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseId'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: object
+                    required:
+                    - id
+                    - title
+                    - content
+                    - is_published
+                    properties:
+                      id:
+                        type: number
+                        example: 123
+                      title:
+                        type: string
+                        example: 'Nuevo Post'
+                      content:
+                        type: string
+                        example: 'Nuevo Contenido'
+                      is_published:
+                        type: boolean
+                        example: true
         "403":
           description: "You are not authorized to create a post, please login"
           content:
@@ -533,7 +876,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponsePost'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ResponsePost'
         "400":
           description: "invalid id"
           content:
@@ -559,13 +907,39 @@ paths:
         required: true
         description: Numeric ID
 
+      requestBody:
+        description: Post object to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+              - title
+              - content
+              - is_published
+              properties:
+                title:
+                  type: string
+                  example: 'Nuevo Post'
+                content:
+                  type: string
+                  example: 'Nuevo Contenido'
+                is_published:
+                  type: boolean
+                  example: true
+
       responses:
         "200":
           description: "succesful update"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseUpdatePost'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                   $ref: '#/components/schemas/ResponseUpdatePost'
         "400":
           description: "invalid id"
           content:
@@ -588,10 +962,26 @@ paths:
       tags:
         - "Post"
       summary: Delete an existing post
+
+      parameters:
+      - in: path
+        name: postid
+        schema:
+          type: integer
+        required: true
+
       responses:
         "200":
           description: "succesful delete"
-          content: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ResponsePost'
         "400":
           description: "invalid id"
           content:
@@ -612,10 +1002,10 @@ paths:
                 $ref: '#/components/schemas/ErrorNotFound'
 
   /posts/{postid}/like:
-    post:
+    patch:
       tags:
         - "Likes"
-      summary: Give "like" to a post
+      summary: Toggle between "like or dislike" to a post
 
       parameters:
       - in: path
@@ -650,7 +1040,7 @@ paths:
     delete:
       tags:
         - "Likes"
-      summary: Remove "like" to a post
+      summary: Remove "like or dislike" to a post
 
       parameters:
       - in: path
@@ -682,76 +1072,75 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorNotFound'
+  # /posts/{postid}/dislike:
+  #   post:
+  #     tags:
+  #       - "Likes"
+  #     summary: Give "dislike" to a post
 
-  /posts/{postid}/dislike:
-    post:
-      tags:
-        - "Likes"
-      summary: Give "dislike" to a post
+  #     parameters:
+  #     - in: path
+  #       name: postid
+  #       schema:
+  #         type: integer
+  #       required: true
+  #       description: Numeric ID
 
-      parameters:
-      - in: path
-        name: postid
-        schema:
-          type: integer
-        required: true
-        description: Numeric ID
+  #     responses:
+  #       "200":
+  #         description: "succesful operation"
+  #       "400":
+  #         description: "invalid id"
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/ErrorInvalidId'
+  #       "403":
+  #         description: "You are not authorized, please log in"
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/ErrorNotLogedIn'
+  #       "404":
+  #         description: "post not found"
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/ErrorNotFound'
+    # delete:
+    #   tags:
+    #     - "Likes"
+    #   summary: Remove "dislike" to a post
 
-      responses:
-        "200":
-          description: "succesful operation"
-        "400":
-          description: "invalid id"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorInvalidId'
-        "403":
-          description: "You are not authorized, please log in"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorNotLogedIn'
-        "404":
-          description: "post not found"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorNotFound'
-    delete:
-      tags:
-        - "Likes"
-      summary: Remove "dislike" to a post
+    #   parameters:
+    #   - in: path
+    #     name: postid
+    #     schema:
+    #       type: integer
+    #     required: true
+    #     description: Numeric ID
 
-      parameters:
-      - in: path
-        name: postid
-        schema:
-          type: integer
-        required: true
-        description: Numeric ID
-
-      responses:
-        "200":
-          description: "succesful operation"
-        "400":
-          description: "invalid id"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorInvalidId'
-        "403":
-          description: "You are not authorized, please log in"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorNotLogedIn'
-        "404":
-          description: "post not found"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorNotFound'
+    #   responses:
+    #     "200":
+    #       description: "succesful operation"
+    #     "400":
+    #       description: "invalid id"
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: '#/components/schemas/ErrorInvalidId'
+    #     "403":
+    #       description: "You are not authorized, please log in"
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: '#/components/schemas/ErrorNotLogedIn'
+    #     "404":
+    #       description: "post not found"
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: '#/components/schemas/ErrorNotFound'
 
   /posts/{postid}/report:
     post:
@@ -767,10 +1156,31 @@ paths:
         required: true
         description: Numeric ID
 
+      requestBody:
+        description: comment send from client
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestReportPost'
+          text/plain:
+            schema:
+              type: string
+
       responses:
         "200":
           description: "succesful operation"
-          content: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/RequestReportPost'
+
         "400":
           description: "invalid id"
           content:
@@ -805,7 +1215,16 @@ paths:
       responses:
         "200":
           description: "succesful operation"
-          content: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/RequestReportPost'
         "400":
           description: "invalid id"
           content:
@@ -854,6 +1273,15 @@ paths:
       responses:
         '200':
           description: 'succesful operation'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/RequestComment'
         '400':
           description: 'invalid id'
           content:
@@ -873,7 +1301,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorNotFound'
 
-  /comments/{postid}/{commentid}:
+  /comments/{commentid}:
     put:
       tags:
           - "Comment"
@@ -881,15 +1309,30 @@ paths:
 
       parameters:
       - in: path
-        name: postid
+        name: commentid
         schema:
           type: integer
         required: true
         description: Numeric ID
 
+      requestBody:
+        content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestComment'
+
       responses:
         '200':
           description: 'succesful update'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/RequestComment'
         '400':
           description: 'invalid id'
           content:
@@ -913,9 +1356,26 @@ paths:
         - "Comment"
       summary: Delete an existing comment
 
+      parameters:
+      - in: path
+        name: commentid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
+
       responses:
         '200':
-          description: 'succesful update'
+          description: 'succesful delete'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/RequestComment'
         '400':
           description: 'invalid id'
           content:
@@ -935,11 +1395,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorNotFound'
 
+  # /comments/{postid}/like && /comments/{postid}/dislike
   /comments/{postid}/like:
-    post:
+    patch:
       tags:
         - "Likes"
-      summary: Give "like" to a comment
+      summary: Toggle between "like or dislike" to a comment
 
       parameters:
       - in: path
@@ -950,7 +1411,7 @@ paths:
         description: Numeric ID
 
       requestBody:
-        description: update comment with new comment
+        description: update dislike to like
         required: true
         content:
           application/json:
@@ -1016,23 +1477,125 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorNotFound'
 
-  /comments/{postid}/dislike:
+  # /comments/{postid}/dislike:
+  #   patch:
+  #     tags:
+  #       - "Likes"
+  #     summary: Give "dislike" to a comment
+
+  #     parameters:
+  #     - in: path
+  #       name: postid
+  #       schema:
+  #         type: integer
+  #       required: true
+  #       description: Numeric ID
+
+  #     requestBody:
+  #       description: update like to dislike
+  #       required: true
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: '#/components/schemas/RequestComment'
+  #         text/plain:
+  #           schema:
+  #             type: string
+
+      # responses:
+      #   '200':
+      #     description: 'succesful operation'
+      #   '400':
+      #     description: 'invalid id'
+      #     content:
+      #       application/json:
+      #         schema:
+      #           $ref: '#/components/schemas/ErrorInvalidId'
+      #   "403":
+      #     description: "You are not authorized, please log in"
+      #     content:
+      #       application/json:
+      #         schema:
+      #           $ref: '#/components/schemas/ErrorNotLogedIn'
+      #   '404':
+      #     description: 'comment not found'
+      #     content:
+      #       application/json:
+      #         schema:
+      #           $ref: '#/components/schemas/ErrorNotFound'
+    # delete:
+    #   tags:
+    #     - "Likes"
+    #   summary: Remove "dislike" to a comment
+
+    #   parameters:
+    #   - in: path
+    #     name: postid
+    #     schema:
+    #       type: integer
+    #     required: true
+    #     description: Numeric ID
+
+    #   responses:
+    #     '200':
+    #       description: 'succesful operation'
+    #     '400':
+    #       description: 'invalid id'
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: '#/components/schemas/ErrorInvalidId'
+    #     "403":
+    #       description: "You are not authorized"
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: '#/components/schemas/ErrorNotAuthorized'
+    #     '404':
+    #       description: 'comment not found'
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: '#/components/schemas/ErrorNotFound'
+
+  /comments/{commentid}/report:
     post:
       tags:
-        - "Likes"
-      summary: Give "dislike" to a comment
+        - "Reporting"
+      summary: Report a comment
 
       parameters:
       - in: path
-        name: postid
+        name: commentid
         schema:
           type: integer
         required: true
         description: Numeric ID
 
+      requestBody:
+        description: comment send from client
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestReportComment'
+          text/plain:
+            schema:
+              type: string
+
       responses:
         '200':
           description: 'succesful operation'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/RequestReportComment'
         '400':
           description: 'invalid id'
           content:
@@ -1053,44 +1616,8 @@ paths:
                 $ref: '#/components/schemas/ErrorNotFound'
     delete:
       tags:
-        - "Likes"
-      summary: Remove "dislike" to a comment
-
-      parameters:
-      - in: path
-        name: postid
-        schema:
-          type: integer
-        required: true
-        description: Numeric ID
-
-      responses:
-        '200':
-          description: 'succesful operation'
-        '400':
-          description: 'invalid id'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorInvalidId'
-        "403":
-          description: "You are not authorized"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorNotAuthorized'
-        '404':
-          description: 'comment not found'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorNotFound'
-
-  /comments/{commentid}/report:
-    post:
-      tags:
         - "Reporting"
-      summary: Report a comment
+      summary: Delete a comment
 
       parameters:
       - in: path
@@ -1103,6 +1630,16 @@ paths:
       responses:
         '200':
           description: 'succesful operation'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/RequestReportComment'
         '400':
           description: 'invalid id'
           content:
@@ -1121,6 +1658,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorNotFound'
+
+
+
 
 
 
