@@ -2,9 +2,9 @@ import {Router} from 'express';
 import express from 'express';
 import morgan from 'morgan';
 
-import {accounts} from './controllers/accounts';
-import {comments} from './controllers/comments';
-import {posts} from './controllers/posts';
+import {accounts} from './routes/accounts';
+import {comments} from './routes/comments';
+import {posts} from './routes/posts';
 
 const app = express();
 

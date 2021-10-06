@@ -1,23 +1,64 @@
-import express from 'express'
-import { Router } from 'express'
-import { showComment } from '../services/comments'
+import {PrismaClient} from '@prisma/client'
 
-export const comments = Router()
+const prisma = new PrismaClient()
 
-// middleware that is specific to this router
-comments.use(function timeLog(req, res, next) {
-  console.log('Time: ', Date.now())
-  next()
-})
-// define the home page route
-comments.get('/', function (req, res) {
-  res.send('Birds home page')
-})
-// define the about route
-comments.get('/about', async function (req, res) {
-  const response = await showComment(1);
-  //console.log(response);
-  res.send(response)
-})
+export const createComment = async (
+  id: number,
+  content: string,
+  post_id: number,
+  user_id: number,
+) => {
+  const query = await prisma.comments.create({
+    data: {
+      id: id,
+      content: content,
+      postId: post_id,
+      userId: user_id,
+      isPublished: true,
+      likeCounter: 0,
+      dislikeCounter: 0,
+    },
+  })
+  console.log(query)
+}
 
-// module.exports = accounts
+export const updatecomment = async (id: number, content: string) => {
+  const query = await prisma.comments.update({
+    where: {
+      id: id,
+    },
+    data: {
+      content: content,
+    },
+  })
+  console.log(query)
+}
+
+export const deleteComment = async (id: number) => {
+  const query = await prisma.comments.delete({
+    where: {
+      id: id,
+    },
+  })
+  console.log(query)
+}
+
+export const showComment = async (id: number) => {
+  const query = await prisma.comments.findUnique({
+    where: {
+      id: id,
+    },
+  })
+  //console.log(query)
+  return query;
+}
+
+export const showAllComments = async () => {
+  const query = await prisma.comments.findMany({
+    orderBy: {
+      updatedAt: 'desc',
+    },
+  })
+  console.log(query)
+  return query;
+}

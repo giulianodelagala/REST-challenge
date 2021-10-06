@@ -1,59 +1,89 @@
-import {Router} from 'express';
-import {createPost, deletePost, getOnePost, getPosts} from '../services/posts';
+import {PrismaClient} from '@prisma/client';
 
-export const posts = Router();
+const prisma = new PrismaClient();
 
-// define the posts route
-posts
-  .route('/')
+type bodyRequest = {
+  id: number;
+  title: string;
+  content: string;
+  user: number;
+  isPublished?: boolean;
+};
 
-  // Return a list of published Posts
-  .get(async (req, res) => {
-    try {
-      const query = await getPosts();
+type createBody = Omit<bodyRequest, 'id'>;
+type updateBody = Omit<bodyRequest, 'user'>;
 
-      res.status(200).json({data: {query}});
-    } catch (e) {
-      res.status(400).end();
-    }
-  })
-
-  // Create a Post
-  // TODO Verificar si tiene auth para crear
-  .post(async (req, res) => {
-    try {
-      console.log('in controller: ', req.body);
-      const query = await createPost(req.body);
-
-      res.status(201).json({data: {query}});
-    } catch (e) {
-      res.status(400).end();
-    }
+export const createPost = async (body: createBody) => {
+  console.log(body);
+  const query = await prisma.posts.create({
+    data: {
+      title: body.title,
+      content: body.content,
+      isPublished: body.isPublished,
+      user: {
+        connect: {id: body.user},
+      },
+    },
   });
+  //console.log(query)
+};
 
-posts
-  .route('/:postid')
-
-  // Returns a single post
-  .get(async (req, res) => {
-    try {
-      const query = await getOnePost(Number(req.params.postid));
-
-      res.status(200).json({data: {query}});
-    } catch (e) {
-      res.status(400).end();
-    }
-  })
-
-  // Delete an existing post
-  // TODO Verificar si tiene autorizacion para borrar
-  .delete(async (req, res) => {
-    try {
-      const record = await getOnePost(Number(req.params.postid));
-      const query = await deletePost(Number(req.params.postid));
-
-      res.status(200).json({data: {record}});
-    } catch (e) {
-      res.status(400).end();
-    }
+export const updatePost = async (body: updateBody) => {
+  const query = await prisma.posts.update({
+    where: {
+      id: body.id,
+    },
+    data: {
+      title: body.title,
+      content: body.content,
+      isPublished: body.isPublished,
+    },
   });
+  // console.log(query);
+};
+
+export const deletePost = async (id: number) => {
+  const query = await prisma.posts.delete({
+    where: {
+      id: id,
+    },
+  });
+  // console.log(query);
+};
+
+export const getOnePost = async (id: number) => {
+  const query = await prisma.posts.findUnique({
+    where: {
+      id: id,
+    },
+  });
+  // console.log(query);
+  return query;
+};
+
+export const getPosts = async () => {
+  const query = await prisma.posts.findMany({
+    where: {
+      isPublished: true,
+    },
+    orderBy: {
+      updatedAt: 'desc',
+    },
+  });
+  console.log(query);
+  return query;
+};
+
+export const getPostsOfUser = async (userId: number) => {
+  const query = await prisma.posts.findMany({
+    where: {
+      userId: userId,
+      isPublished: true,
+    },
+    orderBy: {
+      updatedAt: 'desc',
+    },
+  });
+  console.log(query);
+  return query;
+};
