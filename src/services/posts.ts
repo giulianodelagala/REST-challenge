@@ -1,64 +1,65 @@
-import {PrismaClient} from '@prisma/client'
-import {title} from 'process'
+import {PrismaClient} from '@prisma/client';
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
-export const createPost = async (
-  title: string,
-  content: string,
-  user: number,
-  isPublished?: boolean,
-) => {
+type bodyRequest = {
+  id: number;
+  title: string;
+  content: string;
+  user: number;
+  isPublished?: boolean;
+};
+
+type createBody = Omit<bodyRequest, 'id'>;
+type updateBody = Omit<bodyRequest, 'user'>;
+
+export const createPost = async (body: createBody) => {
+  console.log(body);
   const query = await prisma.posts.create({
     data: {
-      title: title,
-      content: content,
-      isPublished: isPublished,
+      title: body.title,
+      content: body.content,
+      isPublished: body.isPublished,
       user: {
-        connect: {id: user},
+        connect: {id: body.user},
       },
     },
-  })
-  console.log(query)
-}
+  });
+  //console.log(query)
+};
 
-export const updatePost = async (
-  id: number,
-  title: string,
-  content: string,
-  isPublished?: boolean,
-) => {
+export const updatePost = async (body: updateBody) => {
   const query = await prisma.posts.update({
     where: {
-      id: id,
+      id: body.id,
     },
     data: {
-      title: title,
-      content: content,
-      isPublished: isPublished,
+      title: body.title,
+      content: body.content,
+      isPublished: body.isPublished,
     },
-  })
-  console.log(query)
-}
+  });
+  // console.log(query);
+};
 
-export const deleteComment = async (id: number) => {
+export const deletePost = async (id: number) => {
   const query = await prisma.posts.delete({
     where: {
       id: id,
     },
-  })
-  console.log(query)
-}
+  });
+  // console.log(query);
+};
 
 export const getOnePost = async (id: number) => {
   const query = await prisma.posts.findUnique({
     where: {
       id: id,
     },
-  })
-  //console.log(query)
-  return query
-}
+  });
+  // console.log(query);
+  return query;
+};
 
 export const getPosts = async () => {
   const query = await prisma.posts.findMany({
@@ -68,10 +69,10 @@ export const getPosts = async () => {
     orderBy: {
       updatedAt: 'desc',
     },
-  })
-  console.log(query)
-  return query
-}
+  });
+  console.log(query);
+  return query;
+};
 
 export const getPostsOfUser = async (userId: number) => {
   const query = await prisma.posts.findMany({
@@ -82,7 +83,7 @@ export const getPostsOfUser = async (userId: number) => {
     orderBy: {
       updatedAt: 'desc',
     },
-  })
-  console.log(query)
-  return query
-}
+  });
+  console.log(query);
+  return query;
+};

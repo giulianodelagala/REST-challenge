@@ -1,26 +1,57 @@
-import express from 'express'
-import { Router } from 'express'
-import { getPosts } from '../services/posts'
+import {Router} from 'express';
+import {createPost, deletePost, getOnePost, getPosts} from '../services/posts';
 
-export const posts = Router()
+export const posts = Router();
 
-// // middleware that is specific to this router
-// posts.use(function timeLog(req, res, next) {
-//   console.log('Time: ', Date.now())
-//   next()
-// })
+// define the posts route
+posts
+  .route('/')
 
-// define the home page route
-posts.get('/', async (req, res) => {
-  const query = await getPosts();
-  res.send(query)
-})
+  // Return a list of published Posts
+  .get(async (req, res) => {
+    try {
+      const query = await getPosts();
 
-// // define the about route
-// posts.get('/about', async function (req, res) {
-//   const response = await showComment(1)
-//   //console.log(response);
-//   res.send(response)
-// })
+      res.status(200).json({data: {query}});
+    } catch (e) {
+      res.status(400).end();
+    }
+  })
 
-// module.exports = accounts
+  // Create a Post
+  .post(async (req, res) => {
+    try {
+      console.log('in controller: ', req.body);
+      const query = await createPost(req.body);
+
+      res.status(201).json({data: {query}});
+    } catch (e) {
+      res.status(400).end();
+    }
+  });
+
+posts
+  .route('/:postid')
+
+  // Returns a single post
+  .get(async (req, res) => {
+    try {
+      const query = await getOnePost(Number(req.params.postid));
+
+      res.status(200).json({data: {query}});
+    } catch (e) {
+      res.status(400).end();
+    }
+  })
+
+  // Delete an existing post
+  .delete(async (req, res) => {
+    try {
+      const record = await getOnePost(Number(req.params.postid));
+      const query = await deletePost(Number(req.params.postid));
+
+      res.status(200).json({data: {record}});
+    } catch (e) {
+      res.status(400).end();
+    }
+  });
