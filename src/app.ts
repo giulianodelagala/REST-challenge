@@ -11,6 +11,7 @@ import { posts } from './controllers/posts';
 const app = express();
 
 app.use(morgan('dev'));
+app.use(express.json());
 
 app.use('/accounts', accounts)
 app.use('/comments', comments)
