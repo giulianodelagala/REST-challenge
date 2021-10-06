@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import {getAccounts, getOneAccount} from '../controllers/accounts';
+import {getAccounts, getOneAccount} from '../services/accounts';
 
 export const accounts = Router();
 

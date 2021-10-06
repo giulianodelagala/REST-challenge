@@ -36,6 +36,18 @@ export const getOneAccount = async (id: number) => {
   return query;
 };
 
+export const updatecomment = async (id: number, content: string) => {
+  const query = await prisma.comments.update({
+    where: {
+      id: id,
+    },
+    data: {
+      content: content,
+    },
+  });
+  console.log(query);
+};
+
 // export const createAccount = async (
 //   id: number,
 //   content: string,

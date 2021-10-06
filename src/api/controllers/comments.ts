@@ -1,6 +1,6 @@
 import express from 'express'
 import { Router } from 'express'
-import { showComment } from '../controllers/comments'
+import { showComment } from '../../services/comments'
 
 export const comments = Router()
 
