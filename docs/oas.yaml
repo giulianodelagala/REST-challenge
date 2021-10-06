@@ -606,6 +606,113 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorNotFound'
+    put:
+      tags:
+        - "Post"
+      summary: Update an existing post
+
+      parameters:
+      - in: path
+        name: postid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
+
+      requestBody:
+        description: Post object to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+              - title
+              - content
+              - is_published
+              properties:
+                title:
+                  type: string
+                  example: 'Nuevo Post'
+                content:
+                  type: string
+                  example: 'Nuevo Contenido'
+                is_published:
+                  type: boolean
+                  example: true
+
+      responses:
+        "200":
+          description: "succesful update"
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                   $ref: '#/components/schemas/ResponseUpdatePost'
+        "400":
+          description: "invalid id"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidId'
+        "403":
+          description: "You are not authorized to update this post"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotAuthorized'
+        "404":
+          description: "post not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+    delete:
+      tags:
+        - "Post"
+      summary: Delete an existing post
+
+      parameters:
+      - in: path
+        name: postid
+        schema:
+          type: integer
+        required: true
+
+      responses:
+        "200":
+          description: "succesful delete"
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ResponsePost'
+        "400":
+          description: "invalid id"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidId'
+        "403":
+          description: "You are not authorized to delete this post"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotAuthorized'
+        "404":
+          description: "post not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+
 
   /accounts/me/posts/{postid}/comments:
     get:
@@ -820,7 +927,7 @@ paths:
                   type: boolean
                   example: true
       responses:
-        "200":
+        "201":
           description: "post created"
           content:
             application/json:
@@ -894,70 +1001,70 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorNotFound'
-    put:
-      tags:
-        - "Post"
-      summary: Update an existing post
+    # put:
+    #   tags:
+    #     - "Post"
+    #   summary: Update an existing post
 
-      parameters:
-      - in: path
-        name: postid
-        schema:
-          type: integer
-        required: true
-        description: Numeric ID
+    #   parameters:
+    #   - in: path
+    #     name: postid
+    #     schema:
+    #       type: integer
+    #     required: true
+    #     description: Numeric ID
 
-      requestBody:
-        description: Post object to be created
-        required: true
-        content:
-          application/json:
-            schema:
-              required:
-              - title
-              - content
-              - is_published
-              properties:
-                title:
-                  type: string
-                  example: 'Nuevo Post'
-                content:
-                  type: string
-                  example: 'Nuevo Contenido'
-                is_published:
-                  type: boolean
-                  example: true
+    #   requestBody:
+    #     description: Post object to be created
+    #     required: true
+    #     content:
+    #       application/json:
+    #         schema:
+    #           required:
+    #           - title
+    #           - content
+    #           - is_published
+    #           properties:
+    #             title:
+    #               type: string
+    #               example: 'Nuevo Post'
+    #             content:
+    #               type: string
+    #               example: 'Nuevo Contenido'
+    #             is_published:
+    #               type: boolean
+    #               example: true
 
-      responses:
-        "200":
-          description: "succesful update"
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - data
-                properties:
-                  data:
-                   $ref: '#/components/schemas/ResponseUpdatePost'
-        "400":
-          description: "invalid id"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorInvalidId'
-        "403":
-          description: "You are not authorized to update this post"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorNotAuthorized'
-        "404":
-          description: "post not found"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorNotFound'
+    #   responses:
+    #     "200":
+    #       description: "succesful update"
+    #       content:
+    #         application/json:
+    #           schema:
+    #             type: object
+    #             required:
+    #             - data
+    #             properties:
+    #               data:
+    #                $ref: '#/components/schemas/ResponseUpdatePost'
+    #     "400":
+    #       description: "invalid id"
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: '#/components/schemas/ErrorInvalidId'
+    #     "403":
+    #       description: "You are not authorized to update this post"
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: '#/components/schemas/ErrorNotAuthorized'
+    #     "404":
+    #       description: "post not found"
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: '#/components/schemas/ErrorNotFound'
     delete:
       tags:
         - "Post"
