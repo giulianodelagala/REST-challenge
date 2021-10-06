@@ -8,6 +8,7 @@ import {
 } from '../../services/comments';
 import {Request, Response} from 'express';
 
+// create a comment or draft
 export const comments = Router();
 comments.route('/:postid').post(async (req: Request, res: Response) => {
   try {
@@ -22,6 +23,7 @@ comments.route('/:postid').post(async (req: Request, res: Response) => {
   }
 });
 
+// Update an existing comment and Delete a existing post
 comments
   .route('/:commentid')
   .put(async (req: Request, res: Response) => {
@@ -41,4 +43,5 @@ comments
     }
   });
 
+// Report a comment and Delete a comment
 comments.route('/:commentid/report').post().delete();
