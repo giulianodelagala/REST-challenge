@@ -3,14 +3,12 @@ import {PrismaClient} from '@prisma/client'
 const prisma = new PrismaClient()
 
 export const createComment = async (
-  id: number,
   content: string,
   post_id: number,
   user_id: number,
 ) => {
   const query = await prisma.comments.create({
     data: {
-      id: id,
       content: content,
       postId: post_id,
       userId: user_id,
