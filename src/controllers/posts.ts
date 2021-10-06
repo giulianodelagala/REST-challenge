@@ -19,6 +19,7 @@ posts
   })
 
   // Create a Post
+  // TODO Verificar si tiene auth para crear
   .post(async (req, res) => {
     try {
       console.log('in controller: ', req.body);
@@ -45,6 +46,7 @@ posts
   })
 
   // Delete an existing post
+  // TODO Verificar si tiene autorizacion para borrar
   .delete(async (req, res) => {
     try {
       const record = await getOnePost(Number(req.params.postid));
