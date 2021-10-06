@@ -16,7 +16,7 @@ export const createComment = async (
       userId: user_id,
       isPublished: true,
       likeCounter: 0,
-      dislikeCounter: 0
+      dislikeCounter: 0,
     },
   })
   console.log(query)
@@ -49,7 +49,8 @@ export const showComment = async (id: number) => {
       id: id,
     },
   })
-  console.log(query)
+  //console.log(query)
+  return query;
 }
 
 export const showAllComments = async () => {
@@ -59,4 +60,5 @@ export const showAllComments = async () => {
     },
   })
   console.log(query)
+  return query;
 }
