@@ -6,13 +6,14 @@ export const createComment = async (
   content: string,
   post_id: number,
   user_id: number,
+  is_published: boolean
 ) => {
   const query = await prisma.comments.create({
     data: {
       content: content,
       postId: post_id,
       userId: user_id,
-      isPublished: true,
+      isPublished: is_published,
       likeCounter: 0,
       dislikeCounter: 0,
     },
