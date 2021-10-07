@@ -6,19 +6,10 @@ import {
   getOneAccount,
   updateAccount,
 } from '../../services/accounts';
+import { deletePost, getOnePost, getPostsOfUser, updatePost } from '../../services/posts';
 
 export const accounts = Router();
 export const signup = Router();
-
-// type bodyAccountRequest = {
-//   id: number;
-//   username?: string;
-//   password?: string;
-//   email?: string;
-//   name?: string;
-//   isNamePublic?: boolean;
-//   isEmailPublic?: boolean;
-// };
 
 signup.route('/').post(async (req, res) => {
   try {
@@ -30,11 +21,11 @@ signup.route('/').post(async (req, res) => {
   }
 });
 
-// define the posts route
+// accounts/
 accounts
   .route('/')
 
-  // Return a list of published Posts
+  // Return a list of accounts
   .get(async (req, res) => {
     try {
       const query = await getAccounts();
@@ -45,6 +36,7 @@ accounts
     }
   });
 
+// accounts/:accountid
 accounts
   .route('/:accountid')
 
@@ -81,42 +73,61 @@ accounts
     }
   });
 
-// // Create a Post
-// // TODO Verificar si tiene auth para crear
-// .post(async (req, res) => {
-//   try {
-//     console.log('in controller: ', req.body);
-//     const query = await createPost(req.body);
+// accounts/me/posts
 
-//     res.status(201).json({data: {query}});
-//   } catch (e) {
-//     res.status(400).end();
-//   }
-// });
+accounts
+  .route('/me/posts')
 
-// posts
-//   .route('/:postid')
+  // Returns a list of posts of user logged
+  .get(async (req, res) => {
+    try {
+      const userId = 1; //TODO get userId from Token
+      const query = await getPostsOfUser(userId);
 
-//   // Returns a single post
-//   .get(async (req, res) => {
-//     try {
-//       const query = await getOnePost(Number(req.params.postid));
+      res.status(200).json({data: {query}});
+    } catch (e) {
+      res.status(400).end();
+    }
+  });
 
-//       res.status(200).json({data: {query}});
-//     } catch (e) {
-//       res.status(400).end();
-//     }
-//   })
+accounts
+  .route('/me/posts/:postid')
 
-//   // Delete an existing post
-//   // TODO Verificar si tiene autorizacion para borrar
-//   .delete(async (req, res) => {
-//     try {
-//       const record = await getOnePost(Number(req.params.postid));
-//       const query = await deletePost(Number(req.params.postid));
+  // Returns a specific post of user logged
+  .get(async (req, res) => {
+    try {
+      //TODO Verify user
+      const userId = 1; //TODO get userId from Token
+      const query = await getOnePost(Number(req.params.postid));
 
-//       res.status(200).json({data: {record}});
-//     } catch (e) {
-//       res.status(400).end();
-//     }
-//   });
+      res.status(200).json({ data: { query } });
+    } catch (e) {
+      res.status(400).end();
+    }
+  })
+
+  // Update an existing post
+  .put(async (req, res) => {
+    try {
+      //TODO Verify user
+      const userId = 1; //TODO get userId from Token
+      const query = await updatePost(req.body);
+
+      res.status(200).json({ data: { query } });
+    } catch (e) {
+      res.status(400).end();
+    }
+  })
+
+  // Delete an existing post
+  // TODO Verificar si tiene autorizacion para borrar
+  .delete(async (req, res) => {
+    try {
+      const record = await getOnePost(Number(req.params.postid));
+      const query = await deletePost(Number(req.params.postid));
+
+      res.status(200).json({ data: { record } });
+    } catch (e) {
+      res.status(400).end();
+    }
+  });
