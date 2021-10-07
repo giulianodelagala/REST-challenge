@@ -13,7 +13,7 @@ generator client {
 model Users {
   id        Int             @id @default(autoincrement())
   username  String          @db.VarChar(50)
-  name      String          @db.VarChar(100)
+  name      String?         @db.VarChar(100)
   password  String          @db.VarChar(255)
   email     String          @db.VarChar(50) @unique
   emailVerifiedAt DateTime? @map("email_verified_at")

@@ -22,7 +22,7 @@ posts
   // TODO Verificar si tiene auth para crear
   .post(async (req, res) => {
     try {
-      console.log('in controller: ', req.body);
+      // console.log('in controller: ', req.body);
       const query = await createPost(req.body);
 
       res.status(201).json({data: {query}});

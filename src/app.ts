@@ -2,7 +2,7 @@ import {Router} from 'express';
 import express from 'express';
 import morgan from 'morgan';
 
-import {accounts} from './api/controllers/accounts';
+import {accounts, signup} from './api/controllers/accounts';
 import {comments} from './api/controllers/comments';
 import {posts} from './api/controllers/posts';
 
@@ -14,6 +14,7 @@ app.use(express.json());
 app.use('/accounts', accounts);
 app.use('/comments', comments);
 app.use('/posts', posts);
+app.use('/signup', signup)
 
 const server = app.listen(3000, () =>
   console.log(`

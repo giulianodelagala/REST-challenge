@@ -1,17 +1,34 @@
 import {Router} from 'express';
-import {getAccounts, getOneAccount} from '../../services/accounts';
+import {
+  createAccount,
+  deleteAccount,
+  getAccounts,
+  getOneAccount,
+  updateAccount,
+} from '../../services/accounts';
 
 export const accounts = Router();
+export const signup = Router();
 
-type bodyAccountRequest = {
-  id: number;
-  username?: string;
-  password?: string;
-  email?: string;
-  name?: string;
-  isNamePublic?: boolean;
-  isEmailPublic?: boolean;
-};
+// type bodyAccountRequest = {
+//   id: number;
+//   username?: string;
+//   password?: string;
+//   email?: string;
+//   name?: string;
+//   isNamePublic?: boolean;
+//   isEmailPublic?: boolean;
+// };
+
+signup.route('/').post(async (req, res) => {
+  try {
+    const query = await createAccount(req.body);
+
+    res.status(201).json({data: {query}});
+  } catch (e) {
+    res.status(400).end();
+  }
+});
 
 // define the posts route
 accounts
@@ -45,6 +62,20 @@ accounts
   // Update an existing account
   .put(async (req, res) => {
     try {
+      const query = await updateAccount(Number(req.params.accountid), req.body);
+      const record = await getOneAccount(Number(req.params.accountid));
+
+      res.status(200).json({data: {record}});
+    } catch (e) {
+      res.status(400).end();
+    }
+  })
+
+  // Delete an existing account
+  .delete(async (req, res) => {
+    try {
+      const record = await getOneAccount(Number(req.params.accountid));
+      const query = await deleteAccount(Number(req.params.accountid));
     } catch (e) {
       res.status(400).end();
     }
