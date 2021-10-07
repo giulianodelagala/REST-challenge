@@ -1,6 +1,7 @@
 import {Router} from 'express';
 import express from 'express';
 import morgan from 'morgan';
+import passport from 'passport'
 
 import {accounts, signup} from './api/controllers/accounts';
 import {comments} from './api/controllers/comments';
@@ -10,6 +11,9 @@ const app = express();
 
 app.use(morgan('dev'));
 app.use(express.json());
+
+app.use(passport.initialize())
+app.use(passport.session())
 
 app.use('/accounts', accounts);
 app.use('/comments', comments);

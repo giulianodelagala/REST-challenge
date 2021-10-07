@@ -3,7 +3,7 @@ import { Router } from 'express';
 import {
   showComment,
   createComment,
-  updatecomment,
+  updateComment,
   deleteComment,
 } from '../../services/comments';
 import { createReport } from '../../services/reports';
@@ -31,7 +31,7 @@ comments
   // Update an existing comment
   .put(async (req: Request, res: Response) => {
     try {
-      const query = await updatecomment(req.body);
+      const query = await updateComment(Number(req.params.commentid), req.body);
       res.status(201).json({ data: { query } });
     } catch (e) {
       res.status(400).end();
