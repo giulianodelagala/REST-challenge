@@ -1,63 +1,58 @@
-import {PrismaClient} from '@prisma/client'
+import { PrismaClient } from '@prisma/client';
+import { createComments, updateComments } from '../types';
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
-export const createComment = async (
-  content: string,
-  post_id: number,
-  user_id: number,
-  is_published: boolean
-) => {
+export const createComment = async (body: createComments) => {
   const query = await prisma.comments.create({
     data: {
-      content: content,
-      postId: post_id,
-      userId: user_id,
-      isPublished: is_published,
+      content: body.content,
+      postId: body.postId,
+      userId: body.userId,
       likeCounter: 0,
       dislikeCounter: 0,
     },
-  })
-  console.log(query)
-}
+  });
+  console.log(query);
+};
 
-export const updatecomment = async (id: number, content: string) => {
+export const updatecomment = async (body: updateComments) => {
   const query = await prisma.comments.update({
     where: {
-      id: id,
+      id: body.id,
     },
     data: {
-      content: content,
+      content: body.content,
     },
-  })
-  console.log(query)
-}
+  });
+  console.log(query);
+};
 
 export const deleteComment = async (id: number) => {
   const query = await prisma.comments.delete({
     where: {
       id: id,
     },
-  })
-  console.log(query)
-}
+  });
+  console.log(query);
+};
 
 export const showComment = async (id: number) => {
   const query = await prisma.comments.findUnique({
     where: {
       id: id,
     },
-  })
+  });
   //console.log(query)
   return query;
-}
+};
 
 export const showAllComments = async () => {
   const query = await prisma.comments.findMany({
     orderBy: {
       updatedAt: 'desc',
     },
-  })
-  console.log(query)
+  });
+  console.log(query);
   return query;
-}
+};
