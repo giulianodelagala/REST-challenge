@@ -1,5 +1,8 @@
 import {Router} from 'express';
+import { authenticate } from 'passport';
 import {createPost, deletePost, getOnePost, getPosts} from '../../services/posts';
+
+const auth = require('../middlewares/authenticate');
 
 export const posts = Router();
 
@@ -20,7 +23,7 @@ posts
 
   // Create a Post
   // TODO Verificar si tiene auth para crear
-  .post(async (req, res) => {
+  .post(auth.verifyUser, async (req, res) => {
     try {
       // console.log('in controller: ', req.body);
       const query = await createPost(req.body);

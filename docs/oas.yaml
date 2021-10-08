@@ -263,6 +263,68 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorNotLogedIn'
 
+# /emailconfirm
+  /emailconfirm:
+    post:
+      tags:
+        - "Auth"
+      summary: Email confirmation
+      requestBody:
+          description: User credentials and token email
+          required: true
+          content:
+            application/json:
+              schema:
+                required:
+                - username
+                - token
+                properties:
+                  username:
+                    type: string
+                    example: 'ragnar'
+                  token:
+                    type: string
+                    example: 'ABCD'
+      responses:
+        "200":
+          description: "Email confirmation succesful"
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: object
+                    description: Return username and email verified
+                    required:
+                    - username
+                    - email
+                    properties:
+                      username:
+                        type: string
+                      email:
+                        type: string
+        "404":
+          description: "Username not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Username not found
+                required:
+                - title
+                - message
+                - status
+                properties:
+                  title:
+                    default: Error
+                  message:
+                    default: "username not found"
+                  status:
+                    default: 404
+
 # signup
   /signup:
     post:
@@ -750,6 +812,62 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorNotFound'
 
+    post:
+      tags:
+        - "Comment"
+      summary: Create a comment or draft
+
+      parameters:
+      - in: path
+        name: postid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
+
+      requestBody:
+        description: comment send from client
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestComment'
+          text/plain:
+            schema:
+              type: string
+
+      responses:
+        '200':
+          description: 'succesful operation'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/RequestComment'
+        '400':
+          description: 'invalid id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidId'
+        "403":
+          description: "You are not authorized, please log in"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotLogedIn'
+        '404':
+          description: 'post not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+
+
   # manage account
   /accounts/{accountid}/posts:
     get:
@@ -863,6 +981,99 @@ paths:
                       $ref: '#/components/schemas/ResponsePost'
         "404":
           description: "account not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+
+    put:
+      tags:
+          - "Comment"
+      summary: Update an existing comment
+
+      parameters:
+      - in: path
+        name: commentid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
+
+      requestBody:
+        content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestComment'
+
+      responses:
+        '200':
+          description: 'succesful update'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/RequestComment'
+        '400':
+          description: 'invalid id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidId'
+        "403":
+          description: "You are not authorized to update this comment"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotAuthorized'
+        '404':
+          description: 'comment not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+    delete:
+      tags:
+        - "Comment"
+      summary: Delete an existing comment
+
+      parameters:
+      - in: path
+        name: commentid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
+
+      responses:
+        '200':
+          description: 'succesful delete'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/RequestComment'
+        '400':
+          description: 'invalid id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidId'
+        "403":
+          description: "You are not authorized to delete this comment"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotAuthorized'
+        '404':
+          description: 'comment not found'
           content:
             application/json:
               schema:
@@ -1352,155 +1563,155 @@ paths:
                 $ref: '#/components/schemas/ErrorNotFound'
 
   # comments
-  /comments/{postid}:
-    post:
-      tags:
-        - "Comment"
-      summary: Create a comment or draft
+  # /comments/{postid}:
+    # post:
+    #   tags:
+    #     - "Comment"
+    #   summary: Create a comment or draft
 
-      parameters:
-      - in: path
-        name: postid
-        schema:
-          type: integer
-        required: true
-        description: Numeric ID
+    #   parameters:
+    #   - in: path
+    #     name: postid
+    #     schema:
+    #       type: integer
+    #     required: true
+    #     description: Numeric ID
 
-      requestBody:
-        description: comment send from client
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RequestComment'
-          text/plain:
-            schema:
-              type: string
+    #   requestBody:
+    #     description: comment send from client
+    #     required: true
+    #     content:
+    #       application/json:
+    #         schema:
+    #           $ref: '#/components/schemas/RequestComment'
+    #       text/plain:
+    #         schema:
+    #           type: string
 
-      responses:
-        '200':
-          description: 'succesful operation'
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - data
-                properties:
-                  data:
-                    $ref: '#/components/schemas/RequestComment'
-        '400':
-          description: 'invalid id'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorInvalidId'
-        "403":
-          description: "You are not authorized, please log in"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorNotLogedIn'
-        '404':
-          description: 'post not found'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorNotFound'
+    #   responses:
+    #     '200':
+    #       description: 'succesful operation'
+    #       content:
+    #         application/json:
+    #           schema:
+    #             type: object
+    #             required:
+    #             - data
+    #             properties:
+    #               data:
+    #                 $ref: '#/components/schemas/RequestComment'
+    #     '400':
+    #       description: 'invalid id'
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: '#/components/schemas/ErrorInvalidId'
+    #     "403":
+    #       description: "You are not authorized, please log in"
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: '#/components/schemas/ErrorNotLogedIn'
+    #     '404':
+    #       description: 'post not found'
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: '#/components/schemas/ErrorNotFound'
 
-  /comments/{commentid}:
-    put:
-      tags:
-          - "Comment"
-      summary: Update an existing comment
+  # /comments/{commentid}:
+    # put:
+    #   tags:
+    #       - "Comment"
+    #   summary: Update an existing comment
 
-      parameters:
-      - in: path
-        name: commentid
-        schema:
-          type: integer
-        required: true
-        description: Numeric ID
+    #   parameters:
+    #   - in: path
+    #     name: commentid
+    #     schema:
+    #       type: integer
+    #     required: true
+    #     description: Numeric ID
 
-      requestBody:
-        content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RequestComment'
+    #   requestBody:
+    #     content:
+    #         application/json:
+    #           schema:
+    #             $ref: '#/components/schemas/RequestComment'
 
-      responses:
-        '200':
-          description: 'succesful update'
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - data
-                properties:
-                  data:
-                    $ref: '#/components/schemas/RequestComment'
-        '400':
-          description: 'invalid id'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorInvalidId'
-        "403":
-          description: "You are not authorized to update this comment"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorNotAuthorized'
-        '404':
-          description: 'comment not found'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorNotFound'
-    delete:
-      tags:
-        - "Comment"
-      summary: Delete an existing comment
+    #   responses:
+    #     '200':
+    #       description: 'succesful update'
+    #       content:
+    #         application/json:
+    #           schema:
+    #             type: object
+    #             required:
+    #             - data
+    #             properties:
+    #               data:
+    #                 $ref: '#/components/schemas/RequestComment'
+    #     '400':
+    #       description: 'invalid id'
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: '#/components/schemas/ErrorInvalidId'
+    #     "403":
+    #       description: "You are not authorized to update this comment"
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: '#/components/schemas/ErrorNotAuthorized'
+    #     '404':
+    #       description: 'comment not found'
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: '#/components/schemas/ErrorNotFound'
+    # delete:
+    #   tags:
+    #     - "Comment"
+    #   summary: Delete an existing comment
 
-      parameters:
-      - in: path
-        name: commentid
-        schema:
-          type: integer
-        required: true
-        description: Numeric ID
+    #   parameters:
+    #   - in: path
+    #     name: commentid
+    #     schema:
+    #       type: integer
+    #     required: true
+    #     description: Numeric ID
 
-      responses:
-        '200':
-          description: 'succesful delete'
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - data
-                properties:
-                  data:
-                    $ref: '#/components/schemas/RequestComment'
-        '400':
-          description: 'invalid id'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorInvalidId'
-        "403":
-          description: "You are not authorized to delete this comment"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorNotAuthorized'
-        '404':
-          description: 'comment not found'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorNotFound'
+    #   responses:
+    #     '200':
+    #       description: 'succesful delete'
+    #       content:
+    #         application/json:
+    #           schema:
+    #             type: object
+    #             required:
+    #             - data
+    #             properties:
+    #               data:
+    #                 $ref: '#/components/schemas/RequestComment'
+    #     '400':
+    #       description: 'invalid id'
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: '#/components/schemas/ErrorInvalidId'
+    #     "403":
+    #       description: "You are not authorized to delete this comment"
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: '#/components/schemas/ErrorNotAuthorized'
+    #     '404':
+    #       description: 'comment not found'
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: '#/components/schemas/ErrorNotFound'
 
   # /comments/{postid}/like && /comments/{postid}/dislike
   /comments/{postid}/like:
