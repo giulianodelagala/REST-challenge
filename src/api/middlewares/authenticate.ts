@@ -8,6 +8,8 @@ import { PrismaClient } from '@prisma/client';
 
 import { UserId } from '../../models/models';
 import { config } from '../../config/config';
+import { NextFunction, Request, Response } from 'express';
+import { GetExpressUserId, GetUserRoleRequest, GetUserSession } from '../utils/definitions';
 
 const prisma = new PrismaClient();
 
@@ -22,19 +24,22 @@ passport.serializeUser<any, any>((req, user, done) => {
 })
 
 passport.deserializeUser(async (id : number, done) => {
+  console.log('desear: ', id)
   try {
     const user = await prisma.users.findUnique({
       where : {
         id: id
       }
     })
+    console.log('user: ', user)
+    const err = new createError.NotFound('User not registered');
     if (!user) {
-      const err = new createError.NotFound('User not registered');
       done(err);
+    } else{
+      done(user);
     }
-    done(user);
   } catch (e) {
-    console.error(e)
+    console.log('here', e)
   }
 })
 
@@ -75,17 +80,17 @@ exports.jwtPassport = passport.use(
   }),
 );
 
-exports.verifyUser = passport.authenticate('jwt', { session: false});
+exports.verifyUser = passport.authenticate('jwt', { session: false });
 
-// User.findOne({ _id: jwt_payload._id }, (err, user) => {
-//   if (err) {
-//     return done(err, false);
-//   } else if (user) {
-//     return done(null, user);
-//   } else {
-//     return done(null, false);
-//   }
-// });
+exports.verifyAdmin = (req: GetUserRoleRequest, res: Response, next: NextFunction) => {
+  if (req.user ?.role === 'MODERATOR') {
+    return next();
+  } else {
+    const err = new Error('You are not authorized');
+    res.statusCode = 403;
+    return next(err);
+  }
+}
 
 /**
  * Sign in using Email and Password.

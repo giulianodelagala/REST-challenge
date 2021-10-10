@@ -13,7 +13,7 @@ type bodyRequest = {
 type createBody = Omit<bodyRequest, 'id'>;
 type updateBody = Omit<bodyRequest, 'user'>;
 
-export const createPost = async (body: createBody) => {
+export const createPost = async (id: number,body: createBody) => {
   console.log(body);
   const query = await prisma.posts.create({
     data: {
@@ -21,7 +21,7 @@ export const createPost = async (body: createBody) => {
       content: body.content,
       isPublished: body.isPublished,
       user: {
-        connect: {id: body.user},
+        connect: {id: id},
       },
     },
   });

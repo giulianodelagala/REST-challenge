@@ -11,7 +11,7 @@ import {
   getOnePost,
   getPostsOfUser,
   updatePost,
-} from '../../services/posts';
+} from '../../services/posts.services';
 
 export const accounts = Router();
 export const signup = Router();

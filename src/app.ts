@@ -1,12 +1,8 @@
-import {Router} from 'express';
 import express from 'express';
 import morgan from 'morgan';
 import passport from 'passport'
 
-import {accounts, signup} from './api/controllers/accounts';
-import {comments} from './api/controllers/comments';
-import {posts} from './api/controllers/posts';
-import { login } from './api/controllers/auth';
+import { router } from './router';
 
 // Load passport config
 const auth = require('./api/middlewares/authenticate');
@@ -29,11 +25,8 @@ app.use(
 app.use(passport.initialize())
 app.use(passport.session())
 
-app.use('/accounts', accounts);
-app.use('/comments', comments);
-app.use('/posts', posts);
-app.use('/signup', signup)
-app.use('/login', login)
+// Defining routes
+app.use('/', router(app));
 
 const server = app.listen(3000, () =>
   console.log(`
