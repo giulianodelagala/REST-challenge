@@ -6,20 +6,26 @@ import {
   updateComment,
   deleteComment,
 } from '../../services/comments';
-import { createReport } from '../../services/reports';
+import { createReportComment } from '../../services/reports';
 import { Request, Response } from 'express';
-import { createLike, UpdateLike } from '../../services/likeComments';
+import { setDislike, setLike } from '../../services/likeComments';
 
 export const comments = Router();
 
 comments
   .route('/:postid')
 
-  // create a comment or draft
+  // create a comment or draft - ENDPOINT TESTED
   .post(async (req: Request, res: Response) => {
     try {
-      const query = await createComment(req.body);
-      res.status(201).json({ data: { query } });
+      const query = await createComment(req.body, Number(req.params.postid));
+      res.status(201).json({
+        data: {
+          id: query.id,
+          content: query.content,
+          is_published: query.isPublished,
+        },
+      });
     } catch (e) {
       res.status(400).end();
     }
@@ -28,21 +34,27 @@ comments
 comments
   .route('/:commentid')
 
-  // Update an existing comment
+  // Update an existing comment - ENDPOINT TESTED
   .put(async (req: Request, res: Response) => {
     try {
       const query = await updateComment(Number(req.params.commentid), req.body);
-      res.status(201).json({ data: { query } });
+      res.status(201).json({
+        data: {
+          content: query.content,
+          is_published: query.isPublished,
+          user_id: query.userId,
+        },
+      });
     } catch (e) {
       res.status(400).end();
     }
   })
 
-  // Delete an existing comment
+  // Delete an existing comment - ENDPOINT TESTED
   .delete(async (req: Request, res: Response) => {
     try {
-      const query = await deleteComment(req.body.id);
-      res.status(201).json({ data: { query } });
+      const query = await deleteComment(Number(req.params.commentid));
+      res.status(204).json({ query });
     } catch (e) {
       res.status(400).end();
     }
@@ -51,10 +63,13 @@ comments
 comments
   .route('/:commentid/report')
 
-  // Report a comment
+  // Report in a comment - ENDPOINT TESTED
   .post(async (req: Request, res: Response) => {
     try {
-      const query = await createReport(req.body);
+      const query = await createReportComment(
+        Number(req.params.commentid),
+        req.body,
+      );
       res.status(201).json({ data: { query } });
     } catch (error) {
       res.status(400).end();
@@ -62,12 +77,26 @@ comments
   });
 
 comments
-  .route('/:postid/like')
+  .route('/:commentid/like')
 
-  // toggle between like or dislike to a comment
+  // toggle between like to a comment - ENDPOINT TESTED
   .patch(async (req: Request, res: Response) => {
     try {
-      const query = await UpdateLike(req.body)
+      const query = await setLike(1, Number(req.params.commentid),'COMMENT');
+      res.status(201).json({ data: { query } });
+    } catch (error) {
+      res.status(400).end();
+    }
+  })
+
+comments
+  .route('/:commentid/dislike')
+
+  // toggle between like or dislike to a comment - ENDPOINT TESTED
+  .patch(async (req: Request, res: Response) => {
+    try {
+      const query = await setDislike(1, Number(req.params.commentid),'COMMENT');
+      res.status(201).json({ data: { query } });
     } catch (error) {
       res.status(400).end();
     }

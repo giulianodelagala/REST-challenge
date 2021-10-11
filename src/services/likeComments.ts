@@ -1,33 +1,84 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, PublishingType } from '@prisma/client';
 import { createLikeComment, toggleLikeComment } from '../types';
+
 
 const prisma = new PrismaClient();
 
-export const createLike = async (body: createLikeComment) => {
-  const query = await prisma.likePost.create({
-    data: {
-      isLike: body.isLike,
-      userId: body.userId,
-      postOrCommentId: body.postOrCommentId,
-      publishingType: body.publishingType,
+export const setLike = async (
+  userId: number,
+  postOrCommentId: number,
+  publishingType: PublishingType
+) => {
+
+  const findLikeId = await prisma.likePost.findMany({
+    where: {
+      userId: userId,
+      postOrCommentId: postOrCommentId,
+    },
+    select: {
+      id: true
+    }
+  });
+
+  const idSelected = findLikeId[0] || undefined
+
+  const query = await prisma.likePost.upsert({
+    where: {
+      id: idSelected.id,
+    },
+    update: {
+      isLike: true,
+    },
+    create: {
+      isLike: true,
+      user: {
+        connect: {
+          id: userId,
+        },
+      },
+      postOrCommentId: postOrCommentId,
+      publishingType: publishingType,
     },
   });
-  console.log(query);
+  return query;
 };
 
-export const UpdateLike = async (body: toggleLikeComment) => {
-  const query = await prisma.likePost.create({
-    data: {
-      id: body.id,
-      isLike: body.isLike,
-      userId: body.userId,
-      postOrCommentId: body.postOrCommentId,
-      publishingType: body.publishingType,
+export const setDislike = async (
+  userId: number,
+  postOrCommentId: number,
+  publishingType: PublishingType
+
+) => {
+
+  const findLikeId = await prisma.likePost.findMany({
+    where: {
+      userId: userId,
+      postOrCommentId: postOrCommentId,
+    },
+    select: {
+      id: true
+    }
+  });
+
+  const idSelected = findLikeId[0] || undefined
+
+  const query = await prisma.likePost.upsert({
+    where: {
+      id: idSelected.id,
+    },
+    update: {
+      isLike: false,
+    },
+    create: {
+      isLike: false,
+      user: {
+        connect: {
+          id: userId,
+        },
+      },
+      postOrCommentId: postOrCommentId,
+      publishingType: publishingType
     },
   });
-  console.log(query);
+  return query;
 };
-
-
-
-
