@@ -8,24 +8,15 @@ interface BodyComments {
   //id: number;
   content: string;
   isPublished?: boolean;
-  //likeCounter: number;
-  //dislikeCounter: number;
-  //createdAt: Date;
-  //updatedAt: Date;
   userId: number;
   postId: number;
 }
 
 type UpdateBody = Omit<BodyComments, 'userId' | 'postId'>
 
-export const createComment = async (body: BodyComments) => {
+export const createComment = async (body: BodyComments, postId: number) => {
   const query = await prisma.comments.create({
     data: {
-      // content: body.content,
-      // postId: body.postId,
-      // userId: body.userId,
-      //likeCounter: 0,
-      //dislikeCounter: 0,
       content: body.content,
       isPublished: body.isPublished != null ? body.isPublished : undefined,
       user: {
@@ -35,34 +26,34 @@ export const createComment = async (body: BodyComments) => {
       },
       post: {
         connect: {
-          id: body.postId
+          id: postId
         }
       }
     },
   });
-  console.log(query);
+  return query
 };
 
-export const updateComment = async (id: number, body: UpdateBody) => {
+export const updateComment = async (comnentId: number, body: UpdateBody) => {
   const query = await prisma.comments.update({
     where: {
-      id: id,
+      id: comnentId,
     },
     data: {
       // content: body.content,
       ...body
     },
   });
-  console.log(query);
+  return query
 };
 
-export const deleteComment = async (id: number) => {
+export const deleteComment = async (commentId: number) => {
   const query = await prisma.comments.delete({
     where: {
-      id: id,
+      id: commentId,
     },
   });
-  console.log(query);
+  return query
 };
 
 export const showComment = async (id: number) => {

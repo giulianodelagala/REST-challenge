@@ -7,6 +7,7 @@ import {
   getOnePost,
   getPosts,
 } from '../../services/posts.services';
+import { createReportPost, deleteReport } from '../../services/reports';
 
 import { GetUserSession } from '../utils/definitions';
 import { dataWrap } from '../utils/wrappers';
@@ -78,3 +79,25 @@ posts
       res.end();
     }
   });
+
+  posts.route('/:postid/report')
+
+  // report a post
+  .post(async (req, res) => {
+    try {
+      const createReport = await  createReportPost(Number(req.params.postid), req.body)
+      res.status(200).json({data: {createReport}});
+    } catch (error) {
+      res.status(400).end();
+    }
+  })
+   
+  // remove report status to a post
+  .delete(async (req, res) => {
+    try {
+      const removeReport = await deleteReport(Number(req.params.postid))
+
+    } catch (error) {
+      res.status(400).end();
+    }
+  })
