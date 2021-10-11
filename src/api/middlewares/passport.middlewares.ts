@@ -20,7 +20,7 @@ const ExtractJwt = require('passport-jwt').ExtractJwt;
 const JwtStrategy = require('passport-jwt').Strategy;
 
 passport.serializeUser<any, any>((req, user, done) => {
-  done(undefined, user)
+  return done(undefined, user)
 })
 
 passport.deserializeUser(async (id : number, done) => {
@@ -34,12 +34,13 @@ passport.deserializeUser(async (id : number, done) => {
     console.log('user: ', user)
     const err = new createError.NotFound('User not registered');
     if (!user) {
-      done(err);
+      return done(err);
     } else{
-      done(user);
+      return done(user);
     }
   } catch (e) {
     console.log('here', e)
+    return done(e);
   }
 })
 
@@ -80,7 +81,27 @@ exports.jwtPassport = passport.use(
   }),
 );
 
-exports.verifyUser = passport.authenticate('jwt', { session: false });
+// const sendError = (err: String, res?: Response) =>
+//   res?.status(400).json({ err: err.toString() });
+
+// const badCredentials =
+//   'There was a problem with your login credentials. Please make sure your username and password are correct.';
+
+// exports.verifyUser = passport.authenticate('jwt', { session: false }, (err, token) => {
+//     // if an error was returned by the strategy, send it to the client
+//     if (err || !token) {
+//       console.log('ERROROROR')
+//       return sendError(err);
+//     }
+//     else {
+//       // manually setting the logged in user to req.user
+//       // optionally, you can set it to "req.session" if you're using some sort of session
+//       console.log('NO ERR')
+//       // req.user = user;
+
+//       // invoking "next" to continue to the controller
+//       // next();
+//     }});
 
 exports.verifyAdmin = (req: GetUserRoleRequest, res: Response, next: NextFunction) => {
   if (req.user ?.role === 'MODERATOR') {

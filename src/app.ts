@@ -5,7 +5,8 @@ import passport from 'passport'
 import { router } from './router';
 
 // Load passport config
-const auth = require('./api/middlewares/authenticate');
+const pass = require('./api/middlewares/passport.middlewares');
+const auth = require('./api/middlewares/auth.middlewares')
 
 const app = express();
 
@@ -15,15 +16,15 @@ app.use(express.json());
 app.use(require('serve-static')(__dirname + '/../../public'));
 app.use(require('cookie-parser')());
 app.use(require('body-parser').urlencoded({ extended: true }));
-app.use(
-  require('express-session')({
-    secret: 'keyboard cat',
-    resave: true,
-    saveUninitialized: true,
-  }),
-);
+// app.use(
+//   require('express-session')({
+//     secret: 'keyboard cat',
+//     resave: false,
+//     saveUninitialized: false,
+//   }),
+// );
 app.use(passport.initialize())
-app.use(passport.session())
+// app.use(passport.session())
 
 // Defining routes
 app.use('/', router(app));

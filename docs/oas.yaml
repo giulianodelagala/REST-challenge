@@ -636,6 +636,61 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorNotFound'
 
+    post:
+      tags:
+        - "Post"
+      summary: Create post
+      requestBody:
+        description: Post object to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+              - title
+              - content
+              - is_published
+              properties:
+                title:
+                  type: string
+                  example: 'Nuevo Post'
+                content:
+                  type: string
+                  example: 'Nuevo Contenido'
+                is_published:
+                  type: boolean
+                  example: true
+      responses:
+        "201":
+          description: "post created"
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: object
+                    required:
+                    - id
+                    - title
+                    - content
+                    - is_published
+                    properties:
+                      id:
+                        type: number
+                        example: 123
+                      title:
+                        type: string
+                        example: 'Nuevo Post'
+                      content:
+                        type: string
+                        example: 'Nuevo Contenido'
+                      is_published:
+                        type: boolean
+                        example: true
+
   /accounts/me/posts/{postid}:
     get:
       tags:
@@ -1113,60 +1168,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorNotFound'
-    post:
-      tags:
-        - "Post"
-      summary: Create post
-      requestBody:
-        description: Post object to be created
-        required: true
-        content:
-          application/json:
-            schema:
-              required:
-              - title
-              - content
-              - is_published
-              properties:
-                title:
-                  type: string
-                  example: 'Nuevo Post'
-                content:
-                  type: string
-                  example: 'Nuevo Contenido'
-                is_published:
-                  type: boolean
-                  example: true
-      responses:
-        "201":
-          description: "post created"
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - data
-                properties:
-                  data:
-                    type: object
-                    required:
-                    - id
-                    - title
-                    - content
-                    - is_published
-                    properties:
-                      id:
-                        type: number
-                        example: 123
-                      title:
-                        type: string
-                        example: 'Nuevo Post'
-                      content:
-                        type: string
-                        example: 'Nuevo Contenido'
-                      is_published:
-                        type: boolean
-                        example: true
+
         "403":
           description: "You are not authorized to create a post, please login"
           content:

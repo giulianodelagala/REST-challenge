@@ -11,7 +11,7 @@ import {
 import { GetUserSession } from '../utils/definitions';
 import { dataWrap } from '../utils/wrappers';
 
-const auth = require('../middlewares/authenticate');
+const auth = require('../middlewares/auth.middlewares');
 
 export const posts = Router();
 
