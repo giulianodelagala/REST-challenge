@@ -7,12 +7,12 @@ import {
   getOnePost,
   getPosts,
 } from '../../services/posts.services';
-import { createReportPost, deleteReport } from '../../services/reports';
+import { createReportPost, deleteReport } from '../../services/reports.services';
 
 import { GetUserSession } from '../utils/definitions';
 import { dataWrap } from '../utils/wrappers';
 
-const auth = require('../middlewares/auth.middlewares');
+const auth = require('../middlewares/auth.middle');
 
 export const posts = Router();
 
@@ -32,16 +32,16 @@ posts
   })
 
   // Create a Post
-  .post(auth.verifyUser, async (req: GetUserSession, res: Response) => {
-    try {
-      if (req.user?.id) {
-        const query = await createPost(req.user.id, req.body);
-        res.status(201).json(dataWrap(req.body));
-      }
-    } catch (e) {
-      res.status(400).end();
-    }
-  });
+  // .post(auth.verifyUser, async (req: GetUserSession, res: Response) => {
+  //   try {
+  //     if (req.user?.id) {
+  //       const query = await createPost(req.user.id, req.body);
+  //       res.status(201).json(dataWrap(req.body));
+  //     }
+  //   } catch (e) {
+  //     res.status(400).end();
+  //   }
+  // });
 
 posts
   .route('/:postid')
@@ -91,7 +91,7 @@ posts
       res.status(400).end();
     }
   })
-   
+
   // remove report status to a post
   .delete(async (req, res) => {
     try {

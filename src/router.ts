@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { accounts, signup } from "./api/controllers/accounts";
+import { accounts, signup } from "./api/controllers/accounts.controllers";
 import { login } from "./api/controllers/auth.controllers";
-import { comments } from "./api/controllers/comments";
+import { comments } from "./api/controllers/comments.controllers";
 import { me } from "./api/controllers/me.controllers";
 import { posts } from "./api/controllers/posts.controllers";
 

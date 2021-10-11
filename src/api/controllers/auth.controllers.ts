@@ -2,7 +2,7 @@ import { Request, Response, Router } from 'express';
 import passport from 'passport';
 import { GetUserSession } from '../utils/definitions';
 
-const authenticate = require('../middlewares/passport.middlewares');
+const authenticate = require('../middlewares/passport.middle');
 
 export const login = Router();
 

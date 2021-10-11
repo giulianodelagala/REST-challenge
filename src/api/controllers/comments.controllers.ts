@@ -5,10 +5,10 @@ import {
   createComment,
   updateComment,
   deleteComment,
-} from '../../services/comments';
-import { createReportComment } from '../../services/reports';
+} from '../../services/comments.services';
+import { createReportComment } from '../../services/reports.services';
 import { Request, Response } from 'express';
-import { setDislike, setLike } from '../../services/likeComments';
+import { setDislike, setLike } from '../../services/like.services';
 
 export const comments = Router();
 

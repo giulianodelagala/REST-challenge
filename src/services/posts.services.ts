@@ -28,10 +28,10 @@ export const createPost = async (id: number,body: createBody) => {
   //console.log(query)
 };
 
-export const updatePost = async (body: updateBody) => {
+export const updatePost = async (postId: number, body: updateBody) => {
   const query = await prisma.posts.update({
     where: {
-      id: body.id,
+      id: postId,
     },
     data: {
       title: body.title,

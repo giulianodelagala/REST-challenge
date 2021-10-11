@@ -5,8 +5,8 @@ import passport from 'passport'
 import { router } from './router';
 
 // Load passport config
-const pass = require('./api/middlewares/passport.middlewares');
-const auth = require('./api/middlewares/auth.middlewares')
+const pass = require('./api/middlewares/passport.middle');
+const auth = require('./api/middlewares/auth.middle')
 
 const app = express();
 
