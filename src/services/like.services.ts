@@ -1,5 +1,4 @@
 import { PrismaClient, PublishingType } from '@prisma/client';
-import { createLikeComment, toggleLikeComment } from '../types';
 
 
 const prisma = new PrismaClient();

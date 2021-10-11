@@ -6,12 +6,6 @@ import {
   getOneAccount,
   updateAccount,
 } from '../../services/accounts.services';
-import {
-  deletePost,
-  getOnePost,
-  getPostsOfUser,
-  updatePost,
-} from '../../services/posts.services';
 
 export const accounts = Router();
 export const signup = Router();

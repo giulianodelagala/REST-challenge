@@ -2,7 +2,6 @@ import { NextFunction, Request, Response, Router } from 'express';
 import createHttpError from 'http-errors';
 
 import {
-  createPost,
   deletePost,
   getOnePost,
   getPosts,
@@ -12,7 +11,7 @@ import { createReportPost, deleteReport } from '../../services/reports.services'
 import { GetUserSession } from '../utils/definitions';
 import { dataWrap } from '../utils/wrappers';
 
-const auth = require('../middlewares/auth.middle');
+import * as auth from '../middlewares/auth.middle';
 
 export const posts = Router();
 

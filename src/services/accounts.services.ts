@@ -1,10 +1,9 @@
-import {PrismaClient} from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
 const saltRounds = 10;
-
 
 type bodyAccountRequest = {
   username: string;
@@ -15,15 +14,13 @@ type bodyAccountRequest = {
   isEmailPublic?: boolean;
 };
 
-export const createAccount = async (
-  body: bodyAccountRequest
-) => {
+export const createAccount = async (body: bodyAccountRequest) => {
   const cryptPassword = bcrypt.hashSync(body.password, saltRounds);
-  const newBody = { ...body, password: cryptPassword }
+  const newBody = { ...body, password: cryptPassword };
 
   const query = await prisma.users.create({
     data: {
-      ...newBody
+      ...newBody,
     },
   });
   console.log(query);

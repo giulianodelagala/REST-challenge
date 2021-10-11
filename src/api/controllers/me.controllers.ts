@@ -1,12 +1,9 @@
 import { NextFunction, Request, Response, Router } from 'express';
-import createHttpError from 'http-errors';
-import passport from 'passport';
 
 import {
   createPost,
   deletePost,
   getOnePost,
-  getPosts,
   getPostsOfUser,
   updatePost,
 } from '../../services/posts.services';
@@ -16,8 +13,7 @@ import { GetUserSession } from '../utils/definitions';
 import { Error403, Error404 } from '../utils/httperrors';
 import { dataWrap } from '../utils/wrappers';
 
-const pass = require('../middlewares/passport.middle');
-const auth = require('../middlewares/auth.middle');
+import * as auth from '../middlewares/auth.middle';
 
 export const me = Router();
 

@@ -1,6 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-import { connect } from 'http2';
-import { createComments, updateComments } from '../types';
 
 const prisma = new PrismaClient();
 

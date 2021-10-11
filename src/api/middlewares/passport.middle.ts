@@ -46,19 +46,19 @@ passport.deserializeUser(async (id : number, done) => {
 
 // JWT config
 
-exports.getToken = function (user: any) {
+export const getToken = function (user: any) {
   console.log('getToken: ', user)
   return jwt.sign(user, config.secretKey, {
     expiresIn: '1h',
   });
 };
 
-var opts = {
+const opts = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: config.secretKey
 };
 
-exports.jwtPassport = passport.use(
+export const jwtPassport = passport.use(
   new JwtStrategy(opts, async (jwt_payload: any, done: any) => {
     console.log('JWT payload: ', jwt_payload);
     try {
@@ -81,29 +81,7 @@ exports.jwtPassport = passport.use(
   }),
 );
 
-// const sendError = (err: String, res?: Response) =>
-//   res?.status(400).json({ err: err.toString() });
-
-// const badCredentials =
-//   'There was a problem with your login credentials. Please make sure your username and password are correct.';
-
-// exports.verifyUser = passport.authenticate('jwt', { session: false }, (err, token) => {
-//     // if an error was returned by the strategy, send it to the client
-//     if (err || !token) {
-//       console.log('ERROROROR')
-//       return sendError(err);
-//     }
-//     else {
-//       // manually setting the logged in user to req.user
-//       // optionally, you can set it to "req.session" if you're using some sort of session
-//       console.log('NO ERR')
-//       // req.user = user;
-
-//       // invoking "next" to continue to the controller
-//       // next();
-//     }});
-
-exports.verifyAdmin = (req: GetUserRoleRequest, res: Response, next: NextFunction) => {
+export const verifyAdmin = (req: GetUserRoleRequest, res: Response, next: NextFunction) => {
   if (req.user ?.role === 'MODERATOR') {
     return next();
   } else {
@@ -116,7 +94,7 @@ exports.verifyAdmin = (req: GetUserRoleRequest, res: Response, next: NextFunctio
 /**
  * Sign in using Email and Password.
  */
-exports.local = passport.use(
+export const local = passport.use(
   new LocalStrategy(async (username, password, done) => {
     try {
       // console.log(username);
@@ -147,19 +125,3 @@ exports.local = passport.use(
     }
   }),
 );
-
-// module.exports = passport;
-
-// User.findOne({ email: email.toLowerCase() }, (err: NativeError, user: UserDocument) => {
-//         if (err) { return done(err); }
-//         if (!user) {
-//             return done(undefined, false, { message: `Email ${email} not found.` });
-//         }
-//         user.comparePassword(password, (err: Error, isMatch: boolean) => {
-//             if (err) { return done(err); }
-//             if (isMatch) {
-//                 return done(undefined, user);
-//             }
-//             return done(undefined, false, { message: "Invalid email or password." });
-//         });
-//     });

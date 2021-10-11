@@ -1,5 +1,4 @@
 import { Request } from 'express';
-import passport from 'passport';
 
 // export interface GetUserIdRequest extends Request {
 //   user?: {
