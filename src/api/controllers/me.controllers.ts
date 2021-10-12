@@ -43,7 +43,7 @@ me.route('/posts')
     try {
       if (req.user?.id) {
         const query = await getPostsOfUser(req.user.id);
-        res.status(200).json({ data: { query } });
+        res.status(200).json(dataWrap(query));
       } else {
         return res.status(403).json(Error403);
       }
@@ -57,20 +57,25 @@ me.route('/posts')
 me.route('/posts/:postid')
 
   // Returns a specific post of user logged
-  .get(auth.verifyUser, async (req: GetUserSession, res: Response) => {
-    try {
-      if (req.user?.id) {
-        const query = await getOnePost(req.user.id);
-        if (query) {
-          return res.status(200).json(dataWrap(query));
-        } else {
-          return res.status(404).json(Error404);
+  .get(
+    auth.verifyUser,
+    validateAuthor,
+    async (req: GetUserSession, res: Response) => {
+      try {
+        if (req.user?.id) {
+          const query = await getOnePost(Number(req.params.postid));
+
+          if (query) {
+            return res.status(200).json(dataWrap(query));
+          } else {
+            return res.status(404).json(Error404);
+          }
         }
+      } catch (e) {
+        return res.status(400).json(JSON.stringify(e));
       }
-    } catch (e) {
-      return res.status(400).json(JSON.stringify(e));
-    }
-  })
+    },
+  )
 
   // Update an existing post
   .put(
@@ -81,6 +86,7 @@ me.route('/posts/:postid')
         const postId = Number(req.params.postid);
         const query = await updatePost(postId, req.body);
         const newRecord = await getOnePost(Number(req.params.postid));
+
         if (newRecord) {
           return res.status(200).json(dataWrap(newRecord));
         }
@@ -99,6 +105,7 @@ me.route('/posts/:postid')
         const postId = Number(req.params.postid);
         const record = await getOnePost(postId);
         const query = await deletePost(postId);
+
         if (record) {
           return res.status(200).json(dataWrap(record));
         }
