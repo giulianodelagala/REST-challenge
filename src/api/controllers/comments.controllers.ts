@@ -61,15 +61,12 @@ comments
   });
 
 comments
-  .route('/:commentid/report')
+  .route('/:commentid/like')
 
-  // Report in a comment - ENDPOINT TESTED
-  .post(async (req: Request, res: Response) => {
+  // toggle between like to a comment - ENDPOINT TESTED
+  .patch(async (req: Request, res: Response) => {
     try {
-      const query = await createReportComment(
-        Number(req.params.commentid),
-        req.body,
-      );
+      const query = await setLike(1, Number(req.params.commentid), 'COMMENT');
       res.status(201).json({ data: { query } });
     } catch (error) {
       res.status(400).end();
@@ -77,25 +74,16 @@ comments
   });
 
 comments
-  .route('/:commentid/like')
-
-  // toggle between like to a comment - ENDPOINT TESTED
-  .patch(async (req: Request, res: Response) => {
-    try {
-      const query = await setLike(1, Number(req.params.commentid),'COMMENT');
-      res.status(201).json({ data: { query } });
-    } catch (error) {
-      res.status(400).end();
-    }
-  })
-
-comments
   .route('/:commentid/dislike')
 
   // toggle between like or dislike to a comment - ENDPOINT TESTED
   .patch(async (req: Request, res: Response) => {
     try {
-      const query = await setDislike(1, Number(req.params.commentid),'COMMENT');
+      const query = await setDislike(
+        1,
+        Number(req.params.commentid),
+        'COMMENT',
+      );
       res.status(201).json({ data: { query } });
     } catch (error) {
       res.status(400).end();
