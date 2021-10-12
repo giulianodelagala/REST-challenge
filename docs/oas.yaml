@@ -1320,8 +1320,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorNotFound'
-
-  /posts/{postid}/like:
+############
+# Post Like
+############
+  /accounts/me/posts/{postid}/like:
     patch:
       tags:
         - "Likes"
@@ -1329,11 +1331,12 @@ paths:
 
       parameters:
       - in: path
-        name: postid
+        postId: postid
         schema:
           type: integer
         required: true
         description: Numeric ID
+
 
       responses:
         "200":
@@ -1392,77 +1395,77 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorNotFound'
-  # /posts/{postid}/dislike:
-  #   post:
-  #     tags:
-  #       - "Likes"
-  #     summary: Give "dislike" to a post
+  /accounts/me/posts/{postid}/dislike:
+    patch:
+      tags:
+        - "Likes"
+      summary: Give "dislike" to a post
 
-  #     parameters:
-  #     - in: path
-  #       name: postid
-  #       schema:
-  #         type: integer
-  #       required: true
-  #       description: Numeric ID
+      parameters:
+      - in: path
+        name: postid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
 
-  #     responses:
-  #       "200":
-  #         description: "succesful operation"
-  #       "400":
-  #         description: "invalid id"
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/ErrorInvalidId'
-  #       "403":
-  #         description: "You are not authorized, please log in"
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/ErrorNotLogedIn'
-  #       "404":
-  #         description: "post not found"
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/ErrorNotFound'
-    # delete:
-    #   tags:
-    #     - "Likes"
-    #   summary: Remove "dislike" to a post
+      responses:
+        "200":
+          description: "succesful operation"
+        "400":
+          description: "invalid id"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidId'
+        "403":
+          description: "You are not authorized, please log in"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotLogedIn'
+        "404":
+          description: "post not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+    delete:
+      tags:
+        - "Likes"
+      summary: Remove "dislike" to a post
 
-    #   parameters:
-    #   - in: path
-    #     name: postid
-    #     schema:
-    #       type: integer
-    #     required: true
-    #     description: Numeric ID
+      parameters:
+      - in: path
+        name: postid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
 
-    #   responses:
-    #     "200":
-    #       description: "succesful operation"
-    #     "400":
-    #       description: "invalid id"
-    #       content:
-    #         application/json:
-    #           schema:
-    #             $ref: '#/components/schemas/ErrorInvalidId'
-    #     "403":
-    #       description: "You are not authorized, please log in"
-    #       content:
-    #         application/json:
-    #           schema:
-    #             $ref: '#/components/schemas/ErrorNotLogedIn'
-    #     "404":
-    #       description: "post not found"
-    #       content:
-    #         application/json:
-    #           schema:
-    #             $ref: '#/components/schemas/ErrorNotFound'
+      responses:
+        "200":
+          description: "succesful operation"
+        "400":
+          description: "invalid id"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidId'
+        "403":
+          description: "You are not authorized, please log in"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotLogedIn'
+        "404":
+          description: "post not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
 
-  /posts/{postid}/report:
+  /accounts/me/posts/{postid}/report:
     post:
       tags:
         - "Reports"
@@ -1716,7 +1719,7 @@ paths:
     #             $ref: '#/components/schemas/ErrorNotFound'
 
   # /comments/{postid}/like && /comments/{postid}/dislike
-  /comments/{postid}/like:
+  /accounts/me/comments/{postid}/like:
     patch:
       tags:
         - "Likes"
@@ -1797,88 +1800,88 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorNotFound'
 
-  # /comments/{postid}/dislike:
-  #   patch:
-  #     tags:
-  #       - "Likes"
-  #     summary: Give "dislike" to a comment
+  /accounts/me/comments/{postid}/dislike:
+    patch:
+      tags:
+        - "Likes"
+      summary: Give "dislike" to a comment
 
-  #     parameters:
-  #     - in: path
-  #       name: postid
-  #       schema:
-  #         type: integer
-  #       required: true
-  #       description: Numeric ID
+      parameters:
+      - in: path
+        name: postid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
 
-  #     requestBody:
-  #       description: update like to dislike
-  #       required: true
-  #       content:
-  #         application/json:
-  #           schema:
-  #             $ref: '#/components/schemas/RequestComment'
-  #         text/plain:
-  #           schema:
-  #             type: string
+      requestBody:
+        description: update like to dislike
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestComment'
+          text/plain:
+            schema:
+              type: string
 
-      # responses:
-      #   '200':
-      #     description: 'succesful operation'
-      #   '400':
-      #     description: 'invalid id'
-      #     content:
-      #       application/json:
-      #         schema:
-      #           $ref: '#/components/schemas/ErrorInvalidId'
-      #   "403":
-      #     description: "You are not authorized, please log in"
-      #     content:
-      #       application/json:
-      #         schema:
-      #           $ref: '#/components/schemas/ErrorNotLogedIn'
-      #   '404':
-      #     description: 'comment not found'
-      #     content:
-      #       application/json:
-      #         schema:
-      #           $ref: '#/components/schemas/ErrorNotFound'
-    # delete:
-    #   tags:
-    #     - "Likes"
-    #   summary: Remove "dislike" to a comment
+      responses:
+        '200':
+          description: 'succesful operation'
+        '400':
+          description: 'invalid id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidId'
+        "403":
+          description: "You are not authorized, please log in"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotLogedIn'
+        '404':
+          description: 'comment not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+    delete:
+      tags:
+        - "Likes"
+      summary: Remove "dislike" to a comment
 
-    #   parameters:
-    #   - in: path
-    #     name: postid
-    #     schema:
-    #       type: integer
-    #     required: true
-    #     description: Numeric ID
+      parameters:
+      - in: path
+        name: postid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
 
-    #   responses:
-    #     '200':
-    #       description: 'succesful operation'
-    #     '400':
-    #       description: 'invalid id'
-    #       content:
-    #         application/json:
-    #           schema:
-    #             $ref: '#/components/schemas/ErrorInvalidId'
-    #     "403":
-    #       description: "You are not authorized"
-    #       content:
-    #         application/json:
-    #           schema:
-    #             $ref: '#/components/schemas/ErrorNotAuthorized'
-    #     '404':
-    #       description: 'comment not found'
-    #       content:
-    #         application/json:
-    #           schema:
-    #             $ref: '#/components/schemas/ErrorNotFound'
+      responses:
+        '200':
+          description: 'succesful operation'
+        '400':
+          description: 'invalid id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidId'
+        "403":
+          description: "You are not authorized"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotAuthorized'
+        '404':
+          description: 'comment not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
 
-  /comments/{commentid}/report:
+  /accounts/me/comments/{commentid}/report:
     post:
       tags:
         - "Reports"

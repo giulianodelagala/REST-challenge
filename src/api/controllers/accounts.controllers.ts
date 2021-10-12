@@ -1,3 +1,4 @@
+import { Verify } from 'crypto';
 import { Router } from 'express';
 import {
   createAccount,
@@ -26,6 +27,7 @@ accounts
   .route('/')
 
   // Return a list of accounts
+  // TODO Verify Admin
   .get(async (req, res) => {
     try {
       const query = await getAccounts();
@@ -41,6 +43,7 @@ accounts
   .route('/:accountid')
 
   // Returns a single account info
+  // TODO Verify Admin
   .get(async (req, res) => {
     try {
       const query = await getOneAccount(Number(req.params.accountid));
