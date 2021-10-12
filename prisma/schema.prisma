@@ -16,6 +16,7 @@ model Users {
   name      String?         @db.VarChar(100)
   password  String          @db.VarChar(255)
   email     String          @db.VarChar(50) @unique
+  verifyCode      String?   @db.VarChar(5)
   emailVerifiedAt DateTime? @map("email_verified_at")
   isNamePublic    Boolean   @default(true) @map("is_name_public")
   isEmailPublic   Boolean   @default(true) @map("is_email_public")
