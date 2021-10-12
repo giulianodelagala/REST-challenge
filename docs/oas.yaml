@@ -922,6 +922,100 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorNotFound'
 
+  /accounts/me/posts/{postid}/comments/{commentid}:
+    put:
+      tags:
+          - "Comment"
+      summary: Update an existing comment
+
+      parameters:
+      - in: path
+        name: commentid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
+
+      requestBody:
+        content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestComment'
+
+      responses:
+        '200':
+          description: 'succesful update'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/RequestComment'
+        '400':
+          description: 'invalid id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidId'
+        "403":
+          description: "You are not authorized to update this comment"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotAuthorized'
+        '404':
+          description: 'comment not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+    delete:
+      tags:
+        - "Comment"
+      summary: Delete an existing comment
+
+      parameters:
+      - in: path
+        name: commentid
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID
+
+      responses:
+        '200':
+          description: 'succesful delete'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/RequestComment'
+        '400':
+          description: 'invalid id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidId'
+        "403":
+          description: "You are not authorized to delete this comment"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotAuthorized'
+        '404':
+          description: 'comment not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+
 
   # manage account
   /accounts/{accountid}/posts:
@@ -1041,98 +1135,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorNotFound'
 
-    put:
-      tags:
-          - "Comment"
-      summary: Update an existing comment
 
-      parameters:
-      - in: path
-        name: commentid
-        schema:
-          type: integer
-        required: true
-        description: Numeric ID
-
-      requestBody:
-        content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RequestComment'
-
-      responses:
-        '200':
-          description: 'succesful update'
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - data
-                properties:
-                  data:
-                    $ref: '#/components/schemas/RequestComment'
-        '400':
-          description: 'invalid id'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorInvalidId'
-        "403":
-          description: "You are not authorized to update this comment"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorNotAuthorized'
-        '404':
-          description: 'comment not found'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorNotFound'
-    delete:
-      tags:
-        - "Comment"
-      summary: Delete an existing comment
-
-      parameters:
-      - in: path
-        name: commentid
-        schema:
-          type: integer
-        required: true
-        description: Numeric ID
-
-      responses:
-        '200':
-          description: 'succesful delete'
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - data
-                properties:
-                  data:
-                    $ref: '#/components/schemas/RequestComment'
-        '400':
-          description: 'invalid id'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorInvalidId'
-        "403":
-          description: "You are not authorized to delete this comment"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorNotAuthorized'
-        '404':
-          description: 'comment not found'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorNotFound'
 
 # /posts
   /posts:
@@ -1331,7 +1334,7 @@ paths:
 
       parameters:
       - in: path
-        postId: postid
+        name: postid
         schema:
           type: integer
         required: true
@@ -1395,6 +1398,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorNotFound'
+
   /accounts/me/posts/{postid}/dislike:
     patch:
       tags:
@@ -1719,7 +1723,7 @@ paths:
     #             $ref: '#/components/schemas/ErrorNotFound'
 
   # /comments/{postid}/like && /comments/{postid}/dislike
-  /accounts/me/comments/{postid}/like:
+  /accounts/me/posts/{postid}/comments/{commentid}/like:
     patch:
       tags:
         - "Likes"
@@ -1800,7 +1804,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorNotFound'
 
-  /accounts/me/comments/{postid}/dislike:
+  /accounts/me/posts/{postid}/comments/{commentid}/dislike:
     patch:
       tags:
         - "Likes"
@@ -1881,7 +1885,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorNotFound'
 
-  /accounts/me/comments/{commentid}/report:
+  /accounts/me/posts/{postid}/comments/{commentid}/report:
     post:
       tags:
         - "Reports"
