@@ -1,5 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
+import { getCodeVerify } from '../api/utils/functions';
+import { sendEmail } from '../api/utils/sendgrid-mail';
 
 const prisma = new PrismaClient();
 
@@ -13,17 +15,76 @@ type bodyAccountRequest = {
   isNamePublic?: boolean;
   isEmailPublic?: boolean;
 };
+type bodyVerifyAccount = {
+  password: string;
+  email: string;
+  verifyCode: string;
+}
 
 export const createAccount = async (body: bodyAccountRequest) => {
   const cryptPassword = bcrypt.hashSync(body.password, saltRounds);
-  const newBody = { ...body, password: cryptPassword };
-
+  const newBody = {
+    ...body,
+    password: cryptPassword,
+    verifyCode: getCodeVerify(),
+  };
+  const upsertUser = await prisma.users.upsert({
+    where: {
+      email: newBody.email,
+    },
+    update: {
+      verifyCode: newBody.verifyCode,
+    },
+    create: {
+      ...newBody
+    },
+  });
+  try {
+    sendEmail(upsertUser.email, String(upsertUser.verifyCode));
+  } catch (e) {
+    console.error(e);
+  }
+  console.log(upsertUser)
+  /*
   const query = await prisma.users.create({
     data: {
       ...newBody,
     },
   });
-  console.log(query);
+  console.log(query);*/
+};
+
+export const verifyAccount = async (body: bodyVerifyAccount) => {
+  const findUserNotVerified = await prisma.users.findMany({
+    where: {
+      email: body.email,
+      emailVerifiedAt: null
+    },
+    select: {
+      id: true,
+      verifyCode: true,
+    },
+  });
+  const userSelected = findUserNotVerified[0];
+
+  let confirmationResponse = null
+
+  console.log(userSelected.verifyCode);
+  console.log(body.verifyCode)
+
+  if (userSelected.verifyCode == body.verifyCode) {
+    const updateUser = await prisma.users.update({
+      where: {
+        email: body.email,
+      },
+      data: {
+        emailVerifiedAt: new Date(),
+      },
+    })
+    console.log(updateUser)
+    confirmationResponse = updateUser
+  }
+  return confirmationResponse
 };
 
 export const getAccounts = async () => {
