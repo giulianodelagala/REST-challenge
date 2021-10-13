@@ -26,7 +26,7 @@ model Users {
   posts           Posts[]
   comments        Comments[]
   reports         Reports[]
-  likes           LikePost[]
+  likes           LikeDislikes[]
 }
 
 model Posts {
@@ -70,7 +70,7 @@ model Reports {
   publishingType  PublishingType
 }
 
-model LikePost {
+model LikeDislikes {
   id            Int         @id @default(autoincrement())
   isLike        Boolean     @map("is_like")
   createdAt     DateTime    @default(now())  @map("created_at")
@@ -78,6 +78,7 @@ model LikePost {
   userId        Int         @map("user_id")
   postOrCommentId Int       @map("post_comment_id")
   publishingType  PublishingType
+	@@map("LikePost")
 }
 
 enum Role {

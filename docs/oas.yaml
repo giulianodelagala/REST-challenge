@@ -1488,7 +1488,7 @@ paths:
     patch:
       tags:
         - "Likes"
-      summary: Toggle between "like or dislike" to a post
+      summary: Give "like" to a post
 
       parameters:
       - in: path
@@ -1884,7 +1884,7 @@ paths:
     patch:
       tags:
         - "Likes"
-      summary: Toggle between "like or dislike" to a comment
+      summary: Give "like" to a comment
 
       parameters:
       - in: path

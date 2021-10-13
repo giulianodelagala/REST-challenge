@@ -17,6 +17,8 @@ import { dataWrap } from '../utils/wrappers';
 
 export const commentPosts = Router();
 
+// accoounts/:accountid/posts/:postid/comments
+
 commentPosts
   .route('/:accountid/posts/:postid/comments')
 
@@ -30,37 +32,3 @@ commentPosts
     }
   })
 
-
-
-// comments
-//   .route('/:commentid/like')
-
-//   // toggle between like to a comment - ENDPOINT TESTED
-//   .patch(async (req: Request, res: Response) => {
-//     try {
-//       const query = await setLike(1, Number(req.params.commentid), 'COMMENT');
-//       res.status(201).json({ data: { query } });
-//     } catch (error) {
-//       res.status(400).end();
-//     }
-//   });
-
-// comments
-//   .route('/:commentid/dislike')
-
-//   // toggle between like or dislike to a comment - ENDPOINT TESTED
-//   .patch(async (req: Request, res: Response) => {
-//     try {
-//       const query = await setDislike(
-//         1,
-//         Number(req.params.commentid),
-//         'COMMENT',
-//       );
-//       res.status(201).json({ data: { query } });
-//     } catch (error) {
-//       res.status(400).end();
-//     }
-//   })
-
-//   // remove like to a comment
-//   .delete();

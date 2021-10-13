@@ -1,16 +1,25 @@
 import { Request, Response, Router } from 'express';
 import { setDislike, setLike } from '../../services/like.services';
+import { verifyUser } from '../middlewares/auth.middle';
+import { GetUserSession } from '../utils/definitions';
+import { dataWrap } from '../utils/wrappers';
 
 export const commentLike = Router();
+export const postLike = Router();
 
 commentLike
   .route('posts/:postid/comments/:commentid/like')
 
-  // toggle between like to a comment - ENDPOINT TESTED
-  .patch(async (req: Request, res: Response) => {
+  // Give like to a comment - ENDPOINT TESTED
+  .patch(verifyUser, async (req: GetUserSession, res: Response) => {
     try {
-      const query = await setLike(1, Number(req.params.commentid), 'COMMENT');
-      res.status(201).json({ data: { query } });
+      const query = await setLike(
+        Number(req.user?.id),
+        Number(req.params.commentid),
+        'COMMENT',
+      );
+
+      res.status(201).json(dataWrap(query));
     } catch (error) {
       res.status(400).end();
     }
@@ -19,15 +28,16 @@ commentLike
 commentLike
   .route('posts/:postid/comments/:commentid/dislike')
 
-  // toggle between like or dislike to a comment - ENDPOINT TESTED
-  .patch(async (req: Request, res: Response) => {
+  // Give dislike to a comment - ENDPOINT TESTED
+  .patch(async (req: GetUserSession, res: Response) => {
     try {
       const query = await setDislike(
-        1,
+        Number(req.user?.id),
         Number(req.params.commentid),
         'COMMENT',
       );
-      res.status(201).json({ data: { query } });
+
+      res.status(201).json(dataWrap(query));
     } catch (error) {
       res.status(400).end();
     }

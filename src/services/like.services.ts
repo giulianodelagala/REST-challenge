@@ -1,6 +1,5 @@
 import { PrismaClient, PublishingType } from '@prisma/client';
 
-
 const prisma = new PrismaClient();
 
 export const setLike = async (
@@ -9,7 +8,7 @@ export const setLike = async (
   publishingType: PublishingType
 ) => {
 
-  const findLikeId = await prisma.likePost.findMany({
+  const findLikeId = await prisma.likeDislikes.findMany({
     where: {
       userId: userId,
       postOrCommentId: postOrCommentId,
@@ -19,9 +18,9 @@ export const setLike = async (
     }
   });
 
-  const idSelected = findLikeId[0] || undefined
+  const idSelected = findLikeId[0] //|| undefined
 
-  const query = await prisma.likePost.upsert({
+  const query = await prisma.likeDislikes.upsert({
     where: {
       id: idSelected.id,
     },
@@ -49,7 +48,7 @@ export const setDislike = async (
 
 ) => {
 
-  const findLikeId = await prisma.likePost.findMany({
+  const findLikeId = await prisma.likeDislikes.findMany({
     where: {
       userId: userId,
       postOrCommentId: postOrCommentId,
@@ -59,9 +58,9 @@ export const setDislike = async (
     }
   });
 
-  const idSelected = findLikeId[0] || undefined
+  const idSelected = findLikeId[0] //|| undefined
 
-  const query = await prisma.likePost.upsert({
+  const query = await prisma.likeDislikes.upsert({
     where: {
       id: idSelected.id,
     },
