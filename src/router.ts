@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { accounts, signup } from "./api/controllers/accounts.controllers";
-import { login } from "./api/controllers/auth.controllers";
+import { emailconfirm, login } from "./api/controllers/auth.controllers";
 import { commentPosts } from "./api/controllers/comments.controllers";
 import { commentLike, postLike } from "./api/controllers/like.controllers";
 import { me } from "./api/controllers/me.controllers";
@@ -32,6 +32,7 @@ export function router(app: Router): Router {
 
   app.use('/signup', signup);
   app.use('/login', login);
+  app.use('/emailconfirm', emailconfirm);
 
   return expressRouter;
 }
