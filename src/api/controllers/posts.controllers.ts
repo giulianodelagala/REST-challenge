@@ -5,6 +5,7 @@ import {
   deletePost,
   getOnePost,
   getPosts,
+  getPostsOfUser,
 } from '../../services/posts.services';
 import {
   createReportPost,
@@ -17,8 +18,10 @@ import { dataWrap } from '../utils/wrappers';
 import * as auth from '../middlewares/auth.middle';
 import { Error404 } from '../utils/httperrors';
 import { verifyAdmin } from '../middlewares/passport.middle';
+import { accounts } from './accounts.controllers';
 
 export const posts = Router();
+export const accountsPosts = Router();
 
 // /posts
 
@@ -35,18 +38,6 @@ posts
       res.status(400).end();
     }
   });
-
-// Create a Post
-// .post(auth.verifyUser, async (req: GetUserSession, res: Response) => {
-//   try {
-//     if (req.user?.id) {
-//       const query = await createPost(req.user.id, req.body);
-//       res.status(201).json(dataWrap(req.body));
-//     }
-//   } catch (e) {
-//     res.status(400).end();
-//   }
-// });
 
 posts
   .route('/:postid')
@@ -91,3 +82,37 @@ posts
       }
     },
   );
+
+
+// accounts/:accountid/posts
+
+accountsPosts
+  .route('/:accountid/posts')
+
+  // Returns all published posts of a specific user
+  .get(async (req: Request, res: Response) => {
+    try {
+        const query = await getPostsOfUser(Number(req.params.accountid));
+        res.status(200).json(dataWrap(query));
+    } catch (e) {
+      return res.status(400).json(JSON.stringify(e));
+    }
+  })
+
+accountsPosts
+  .route('/:accountid/posts/:postid')
+
+  // Returns a specific post of a specific user
+  .get(async (req: Request, res: Response) => {
+    try {
+        const query = await getOnePost(Number(req.params.postid));
+
+        if (query) {
+          return res.status(200).json(dataWrap(query));
+        } else {
+          return res.status(404).json(Error404);
+        }
+    } catch (e) {
+      return res.status(400).json(JSON.stringify(e));
+    }
+  });

@@ -3,46 +3,47 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 interface BodyComments {
-  //id: number;
   content: string;
   isPublished?: boolean;
-  userId: number;
-  postId: number;
 }
 
-type UpdateBody = Omit<BodyComments, 'userId' | 'postId'>
+type UpdateBody = Omit<BodyComments, 'userId' | 'postId'>;
 
-export const createComment = async (body: BodyComments, postId: number) => {
+export const createComment = async (
+  userId: number,
+  postId: number,
+  body: BodyComments,
+) => {
   const query = await prisma.comments.create({
     data: {
       content: body.content,
       isPublished: body.isPublished != null ? body.isPublished : undefined,
       user: {
         connect: {
-          id: body.userId
-        }
+          id: userId,
+        },
       },
       post: {
         connect: {
-          id: postId
-        }
-      }
+          id: postId,
+        },
+      },
     },
   });
-  return query
+  return query;
 };
 
-export const updateComment = async (comnentId: number, body: UpdateBody) => {
+export const updateComment = async (commentId: number, body: UpdateBody) => {
   const query = await prisma.comments.update({
     where: {
-      id: comnentId,
+      id: commentId,
     },
     data: {
       // content: body.content,
-      ...body
+      ...body,
     },
   });
-  return query
+  return query;
 };
 
 export const deleteComment = async (commentId: number) => {
@@ -51,7 +52,7 @@ export const deleteComment = async (commentId: number) => {
       id: commentId,
     },
   });
-  return query
+  return query;
 };
 
 export const showComment = async (id: number) => {
@@ -71,5 +72,36 @@ export const showAllComments = async () => {
     },
   });
   console.log(query);
+  return query;
+};
+
+export const getCommentsOfPost = async (postId: number) => {
+  const query = await prisma.comments.findMany({
+    where: {
+      postId: postId,
+      isPublished: true,
+    },
+    orderBy: {
+      updatedAt: 'desc',
+    },
+  });
+  // console.log(query);
+  return query;
+};
+
+export const getOneCommentOfPost = async (
+  postId: number,
+  commentId: number,
+) => {
+  const query = await prisma.comments.findMany({
+    where: {
+      id: commentId,
+      postId: postId,
+    },
+    orderBy: {
+      updatedAt: 'desc',
+    },
+  });
+  // console.log(query);
   return query;
 };

@@ -58,6 +58,20 @@ export const getOneAccount = async (id: number) => {
   return query;
 };
 
+export const getUserAccount = async (id: number) => {
+  const query = await prisma.users.findUnique({
+    where: {
+      id: id,
+    },
+    select : {
+      password: false,
+    }
+  });
+  // console.log(query);
+  return query;
+};
+
+
 export const updateAccount = async (
   id: number,
   body: Partial<bodyAccountRequest>,
