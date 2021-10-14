@@ -1,34 +1,118 @@
-import express from 'express';
-import { Router } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import {
-  showComment,
   createComment,
-  updateComment,
   deleteComment,
   getCommentsOfPost,
+  getOneCommentOfPost,
+  updateComment,
 } from '../../services/comments.services';
-import { createReportComment } from '../../services/reports.services';
-import { Request, Response } from 'express';
-import { setDislike, setLike } from '../../services/like.services';
-
-import * as auth from '../middlewares/auth.middle';
 import { GetUserSession } from '../utils/definitions';
+import { Error404 } from '../utils/httperrors';
 import { dataWrap } from '../utils/wrappers';
 
-export const commentPosts = Router();
-
-// accoounts/:accountid/posts/:postid/comments
-
-commentPosts
-  .route('/:accountid/posts/:postid/comments')
-
-  // Return all published comments of a specific post - OK
-  .get(async (req: Request, res: Response) => {
+export class CommentControl {
+  static async getCommentsOfPost(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
     try {
       const query = await getCommentsOfPost(Number(req.params.postid));
-      res.status(200).json(dataWrap(query));
+
+      if (query) {
+        return res.status(200).json(dataWrap(query));
+      } else {
+        return res.status(404).json(Error404);
+      }
     } catch (e) {
       return res.status(400).json(JSON.stringify(e));
     }
-  })
+  }
 
+  static async createComment(
+    req: GetUserSession,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const query = await createComment(
+        Number(req.user?.id),
+        Number(req.params.postid),
+        req.body,
+      );
+
+      if (query) {
+        return res.status(200).json(dataWrap(query));
+      } else {
+        return res.status(404).json(Error404);
+      }
+    } catch (e) {
+      return res.status(400).json(JSON.stringify(e));
+    }
+  }
+
+  static async updateComment(
+    req: GetUserSession,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const commentId = Number(req.params.commentid);
+      const postId = Number(req.params.postid);
+      const query = await updateComment(commentId, req.body);
+      const newRecord = await getOneCommentOfPost(postId, commentId);
+
+      if (query) {
+        return res.status(200).json(dataWrap(query));
+      } else {
+        return res.status(404).json(Error404);
+      }
+    } catch (e) {
+      return res.status(400).json(JSON.stringify(e));
+    }
+  }
+
+  static async deleteComment(
+    req: GetUserSession,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const commentId = Number(req.params.commentid);
+      const postId = Number(req.params.postid);
+
+      const record = await getOneCommentOfPost(postId, commentId);
+
+      if (record) {
+        res.status(200).json(dataWrap(record));
+      } else {
+        return res.status(404).json(Error404);
+      }
+
+      const query = await deleteComment(commentId);
+      next();
+    } catch (e) {
+      return res.status(400).json(JSON.stringify(e));
+    }
+  }
+
+  static async getOneCommentOfPost(
+    req: GetUserSession,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const commentId = Number(req.params.commentid);
+      const postId = Number(req.params.postid);
+      const query = await getOneCommentOfPost(postId, commentId);
+
+      if (query) {
+        return res.status(200).json(dataWrap(query));
+      } else {
+        return res.status(404).json(Error404);
+      }
+    } catch (e) {
+      return res.status(400).json(JSON.stringify(e));
+    }
+  }
+}

@@ -52,6 +52,7 @@ export const createAccount = async (body: bodyAccountRequest) => {
     },
   });
   console.log(query);*/
+  return upsertUser;
 };
 
 export const verifyAccount = async (body: bodyVerifyAccount) => {
@@ -126,6 +127,12 @@ export const getUserAccount = async (id: number) => {
     },
     select : {
       password: false,
+      username: true,
+      name: true,
+      isNamePublic: true,
+      isEmailPublic: true,
+      role: true,
+      createdAt: true,
     }
   });
   // console.log(query);

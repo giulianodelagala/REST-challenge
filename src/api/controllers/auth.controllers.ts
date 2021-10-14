@@ -1,34 +1,35 @@
-import { Request, Response, Router } from 'express';
-import passport from 'passport';
-import { GetUserSession } from '../utils/definitions';
-import { verifyAccount } from '../../services/accounts.services';
+import { NextFunction, Request, Response } from "express";
+import { verifyAccount } from "../../services/accounts.services";
+
+import { GetUserSession } from "../utils/definitions";
 
 const authenticate = require('../middlewares/passport.middle');
 
-export const login = Router();
-export const emailconfirm = Router();
-
-// login
-login.route('/').post(passport.authenticate('local'), (req: GetUserSession, res: Response) => {
-  // console.log(req.user._id);
-
-  // try {
-
-    const token = authenticate.getToken({ _id: req.user?.id})
-
-    return res.json({ token: token }).end();
-  // } catch (e) {
-  //   res.status(400).end();
-  // }
-
-});
-
-// email confirm
-emailconfirm.route('/').patch(async (req: Request, res: Response) => {
-  try {
-    const validateAccount = verifyAccount(req.body);
-    res.status(201).json({ validateAccount });
-  } catch (error) {
-    console.error(error)
+export class AuthControl {
+  static async userLogin(
+    req: GetUserSession,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const token = authenticate.getToken({ _id: req.user?.id });
+      return res.json({ token: token }).end();
+    } catch (e) {
+      return res.status(400).json(JSON.stringify(e));
+    }
   }
-});
+
+  static async emailConfirm(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const validateAccount = verifyAccount(req.body);
+
+      res.status(201).json({ validateAccount });
+    } catch (e) {
+      return res.status(400).json(JSON.stringify(e));
+    }
+  }
+}

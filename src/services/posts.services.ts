@@ -14,7 +14,7 @@ type createBody = Omit<bodyRequest, 'id'>;
 type updateBody = Omit<bodyRequest, 'user'>;
 
 export const createPost = async (id: number,body: createBody) => {
-  console.log(body);
+  // console.log(body);
   const query = await prisma.posts.create({
     data: {
       title: body.title,
@@ -25,7 +25,7 @@ export const createPost = async (id: number,body: createBody) => {
       },
     },
   });
-  //console.log(query)
+  return query;
 };
 
 export const updatePost = async (postId: number, body: updateBody) => {
@@ -39,7 +39,7 @@ export const updatePost = async (postId: number, body: updateBody) => {
       isPublished: body.isPublished,
     },
   });
-  // console.log(query);
+  return query;
 };
 
 export const deletePost = async (id: number) => {
@@ -48,7 +48,7 @@ export const deletePost = async (id: number) => {
       id: id,
     },
   });
-  // console.log(query);
+  return query;
 };
 
 export const getOnePost = async (id: number) => {
@@ -70,7 +70,7 @@ export const getPosts = async () => {
       updatedAt: 'desc',
     },
   });
-  console.log(query);
+  // console.log(query);
   return query;
 };
 
@@ -84,6 +84,6 @@ export const getPostsOfUser = async (userId: number) => {
       updatedAt: 'desc',
     },
   });
-  console.log(query);
+  // console.log(query);
   return query;
 };

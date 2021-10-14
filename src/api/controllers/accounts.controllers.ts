@@ -1,61 +1,53 @@
-import { Verify } from 'crypto';
-import { Router } from 'express';
-import {
-  createAccount,
-  deleteAccount,
-  getAccounts,
-  getOneAccount,
-  updateAccount,
-} from '../../services/accounts.services';
+import { NextFunction, Request, Response } from "express";
+import { createAccount, getAccounts, getOneAccount } from "../../services/accounts.services";
+import { Error403, Error404 } from "../utils/httperrors";
+import { dataWrap } from "../utils/wrappers";
 
-import * as auth from '../middlewares/auth.middle';
-import { Error404 } from '../utils/httperrors';
-import { dataWrap } from '../utils/wrappers';
 
-export const accounts = Router();
-export const signup = Router();
+export class AccountControl {
+  static async createAccount(req: Request, res: Response, next: NextFunction) {
+    try {
+      const query = await createAccount(req.body);
 
-// signup/
-signup.route('/').post(async (req, res) => {
-  try {
-    const query = await createAccount(req.body);
-
-    res.status(201).json({ data: { query } });
-  } catch (e) {
-    res.status(400).end();
+      if (query) {
+        return res.status(201).json(dataWrap(query));
+      } else {
+        return res.status(403).json(Error403);
+      }
+    } catch (e) {
+      return res.status(400).json(JSON.stringify(e));
+    }
   }
-});
 
-// accounts/
-accounts
-  .route('/')
-
-  // Return a list of accounts
   // TODO Verify Admin
-  .get(async (req, res) => {
+  static async getAccounts(req: Request, res: Response, next: NextFunction) {
     try {
       const query = await getAccounts();
 
-      res.status(200).json({ data: { query } });
+      if (query) {
+        return res.status(200).json(dataWrap(query));
+      } else {
+        return res.status(404).json(Error403);
+      }
     } catch (e) {
-      res.status(400).end();
+      return res.status(400).json(JSON.stringify(e));
     }
-  });
+  }
 
-// accounts/:accountid
-accounts
-  .route('/:accountid')
-
-  // Returns a single account info
-  .get(async (req, res) => {
+  static async getOneAccount(req: Request, res: Response, next: NextFunction) {
     try {
       const query = await getOneAccount(Number(req.params.accountid));
 
-      res.status(200).json({ data: { query } });
+      if (query) {
+        return res.status(200).json(dataWrap(query));
+      } else {
+        return res.status(404).json(Error403);
+      }
     } catch (e) {
-      res.status(400).end();
+      return res.status(400).json(JSON.stringify(e));
     }
-  })
+  }
+}
 
   // // Update an existing account
   // // TODO restrict some changes ROLE!

@@ -1,118 +1,132 @@
-import { NextFunction, Request, Response, Router } from 'express';
-import createHttpError from 'http-errors';
-
+import { NextFunction, Request, Response } from 'express';
 import {
+  createPost,
   deletePost,
   getOnePost,
   getPosts,
   getPostsOfUser,
+  updatePost,
 } from '../../services/posts.services';
-import {
-  createReportPost,
-  deleteReport,
-} from '../../services/reports.services';
-
 import { GetUserSession } from '../utils/definitions';
+import { Error404 } from '../utils/httperrors';
 import { dataWrap } from '../utils/wrappers';
 
-import * as auth from '../middlewares/auth.middle';
-import { Error404 } from '../utils/httperrors';
-import { verifyAdmin } from '../middlewares/passport.middle';
-import { accounts } from './accounts.controllers';
-
-export const posts = Router();
-export const accountsPosts = Router();
-
-// /posts
-
-posts
-  .route('/')
-
-  // Return a list of published Posts
-  .get(async (req: Request, res: Response) => {
+export class PostControl {
+  static async getPosts(req: Request, res: Response, next: NextFunction) {
     try {
       const query = await getPosts();
 
-      res.status(200).json(dataWrap(query));
-    } catch (e) {
-      res.status(400).end();
-    }
-  });
-
-posts
-  .route('/:postid')
-
-  // Returns a single post
-  .get(async (req: Request, res: Response) => {
-    try {
-      const query = await getOnePost(Number(req.params.postid));
-
       if (query) {
-        res.status(200).json(dataWrap(query));
+        return res.status(200).json(dataWrap(query));
       } else {
         return res.status(404).json(Error404);
       }
     } catch (e) {
-      res.status(400).end();
+      return res.status(400).json(JSON.stringify(e));
     }
-  })
+  }
 
-  // Delete an existing post
-  // TODO verifyAdmin
-  .delete(
-    auth.verifyUser,
-    async (req: GetUserSession, res: Response, next: NextFunction) => {
-      try {
-        const record = await getOnePost(Number(req.params.postid));
+  static async getOnePost(req: Request, res: Response, next: NextFunction) {
+    try {
+      const query = await getOnePost(Number(req.params.postid));
 
-        // Verify if User is author
-        if (record?.userId !== req.user?.id) {
-          return next(createHttpError(403, 'You are not authorized'));
-        }
-
-        const query = await deletePost(Number(req.params.postid));
-
-        res.status(200).json({ data: { record } });
-      } catch (e) {
-        // if (res.statusCode === 403) {
-        //   res.end();
-        // }
-        // res.status(400).end();
-        res.end();
+      if (query) {
+        return res.status(200).json(dataWrap(query));
+      } else {
+        return res.status(404).json(Error404);
       }
-    },
-  );
-
-
-// accounts/:accountid/posts
-
-accountsPosts
-  .route('/:accountid/posts')
-
-  // Returns all published posts of a specific user
-  .get(async (req: Request, res: Response) => {
-    try {
-        const query = await getPostsOfUser(Number(req.params.accountid));
-        res.status(200).json(dataWrap(query));
     } catch (e) {
       return res.status(400).json(JSON.stringify(e));
     }
-  })
+  }
 
-accountsPosts
-  .route('/:accountid/posts/:postid')
-
-  // Returns a specific post of a specific user
-  .get(async (req: Request, res: Response) => {
+  static async getPostsOfUser(
+    req: GetUserSession,
+    res: Response,
+    next: NextFunction,
+  ) {
     try {
-        const query = await getOnePost(Number(req.params.postid));
+      const query = await getPostsOfUser(Number(req.user?.id));
 
+      if (query) {
+        return res.status(200).json(dataWrap(query));
+      } else {
+        return res.status(404).json(Error404);
+      }
+    } catch (e) {
+      return res.status(400).json(JSON.stringify(e));
+    }
+  }
+
+  static async getPostsOfAccount(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const query = await getPostsOfUser(Number(req.params.accountid));
+
+      if (query) {
+        return res.status(200).json(dataWrap(query));
+      } else {
+        return res.status(404).json(Error404);
+      }
+    } catch (e) {
+      return res.status(400).json(JSON.stringify(e));
+    }
+  }
+
+  static async createPost(
+    req: GetUserSession,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      if (req.user?.id) {
+        const query = await createPost(req.user.id, req.body);
         if (query) {
-          return res.status(200).json(dataWrap(query));
-        } else {
-          return res.status(404).json(Error404);
+          return res.status(201).json(dataWrap(query));
         }
+      }
     } catch (e) {
       return res.status(400).json(JSON.stringify(e));
     }
-  });
+  }
+
+  static async updatePost(
+    req: GetUserSession,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const postId = Number(req.params.postid);
+      const query = await updatePost(postId, req.body);
+      next();
+    } catch (e) {
+      return res.status(400).json(JSON.stringify(e));
+    }
+  }
+
+  static async deletePost(
+    req: GetUserSession,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const postId = Number(req.params.postid)
+      const record = await getOnePost(postId);
+
+      if (record) {
+        res.status(200).json(dataWrap(record));
+      } else {
+        return res.status(404).json(Error404);
+      }
+
+      const query = await deletePost(postId);
+      next();
+
+    } catch (e) {
+      return res.status(400).json(JSON.stringify(e));
+    }
+  }
+}

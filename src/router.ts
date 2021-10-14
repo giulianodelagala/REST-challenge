@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { accounts, signup } from "./api/controllers/accounts.controllers";
-import { emailconfirm, login } from "./api/controllers/auth.controllers";
-import { commentPosts } from "./api/controllers/comments.controllers";
+import { accounts, signup } from "./api/routes/accounts.routes";
+import { emailconfirm, login } from "./api/routes/auth.routes";
+import { commentPosts } from "./api/routes/comments.routes";
 import { commentLike, postLike } from "./api/controllers/like.controllers";
-import { me } from "./api/controllers/me.controllers";
-import { accountsPosts, posts } from "./api/controllers/posts.controllers";
+import { me } from "./api/routes/me.routes";
+import { accountsPosts, posts } from "./api/routes/posts.routes";
 import { commentReports, postReports } from "./api/controllers/reports.controllers";
 
 const expressRouter = Router();
