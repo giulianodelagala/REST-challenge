@@ -5,6 +5,7 @@ import { commentPosts } from './api/routes/comments.routes';
 import {
   commentDislike,
   commentLike,
+  postDislike,
   postLike,
 } from './api/controllers/like.controllers';
 import { me } from './api/routes/me.routes';
@@ -22,7 +23,7 @@ export function router(app: Router): Router {
   app.use('/accounts/me/comments', commentReports);
 
   app.use('/accounts/me', [commentDislike, commentLike]);
-  app.use('/accounts/me', postLike);
+  app.use('/accounts/me', [postLike, postDislike]);
 
   // accounts
   // accounts/:accountid
