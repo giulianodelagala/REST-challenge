@@ -1,7 +1,8 @@
-import { NextFunction, Request, Response } from "express";
-import { verifyAccount } from "../../services/accounts.services";
+import { NextFunction, Request, Response } from 'express';
+import { getOneAccount, verifyAccount } from '../../services/accounts.services';
 
-import { GetUserSession } from "../utils/definitions";
+import { GetUserSession } from '../utils/definitions';
+import { Error401Email } from '../utils/httperrors';
 
 const authenticate = require('../middlewares/passport.middle');
 
@@ -12,6 +13,11 @@ export class AuthControl {
     next: NextFunction,
   ) {
     try {
+      const query = await getOneAccount(Number(req.user?.id));
+      if (!query?.emailVerifiedAt) {
+        return res.status(401).json(Error401Email);
+      }
+
       const token = authenticate.getToken({ _id: req.user?.id });
       return res.json({ token: token }).end();
     } catch (e) {
@@ -19,11 +25,7 @@ export class AuthControl {
     }
   }
 
-  static async emailConfirm(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ) {
+  static async emailConfirm(req: Request, res: Response, next: NextFunction) {
     try {
       const validateAccount = verifyAccount(req.body);
 

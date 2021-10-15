@@ -1,78 +1,92 @@
-import { Request, Response, Router } from 'express';
+import { PublishingType } from '.prisma/client';
+import { NextFunction, Request, Response } from 'express';
 import {
   deleteLikeOrDisLike,
   setDislike,
   setLike,
 } from '../../services/like.services';
-import { verifyUser } from '../middlewares/auth.middle';
 import { GetUserSession } from '../utils/definitions';
+import { Error400, Error404 } from '../utils/httperrors';
 import { dataWrap } from '../utils/wrappers';
 
-export const commentLike = Router();
-export const commentDislike = Router();
-export const postLike = Router();
-
-commentLike
-  .route('/posts/:postid/comments/:commentid/like')
-
-  // Give like to a comment - ENDPOINT TESTED
-  .patch(verifyUser, async (req: GetUserSession, res: Response) => {
+export class LikeControl {
+  static async setLike(
+    req: GetUserSession,
+    res: Response,
+    next: NextFunction,
+    publishType: 'COMMENT' | 'POST',
+  ) {
     try {
-      const query = await setLike(
-        Number(req.user?.id),
-        Number(req.params.commentid),
-        'COMMENT',
-      );
+      const publishId =
+        publishType === 'COMMENT'
+          ? Number(req.params.commentid)
+          : Number(req.params.postid);
 
-      res.status(201).json(dataWrap(query));
-    } catch (error) {
-      res.status(400).end();
+      const query = await setLike(Number(req.user?.id), publishId, publishType);
+
+      if (query) {
+        return res.status(201).json(dataWrap(query));
+      } else {
+        return res.status(400).json(Error400);
+      }
+    } catch (e) {
+      return res.status(400).json(JSON.stringify(e));
     }
-  })
+  }
 
-  // Remove like to a comment - ENDPOINT TESTED
-  .delete(verifyUser, async (req: GetUserSession, res: Response) => {
+  static async setDislike(
+    req: GetUserSession,
+    res: Response,
+    next: NextFunction,
+    publishType: 'COMMENT' | 'POST',
+  ) {
     try {
-      const query = await deleteLikeOrDisLike(
-        Number(req.user?.id),
-        Number(req.params.commentid),
-        'COMMENT',
-      );
-      res.status(201).json(dataWrap(query));
-    } catch (error) {
-      res.status(400).end();
-    }
-  });
+      const publishId =
+        publishType === 'COMMENT'
+          ? Number(req.params.commentid)
+          : Number(req.params.postid);
 
-commentDislike
-  .route('/posts/:postid/comments/:commentid/dislike')
-
-  // Give dislike to a comment ENDPOINT TESTED
-  .patch(verifyUser, async (req: GetUserSession, res: Response) => {
-    try {
-      console.log(req.params.postid, req.params.commentid, req.user?.id);
       const query = await setDislike(
         Number(req.user?.id),
-        Number(req.params.commentid),
-        'COMMENT',
+        publishId,
+        publishType,
       );
 
-      res.status(201).json(dataWrap(query));
-    } catch (error) {
-      res.status(400).end();
+      if (query) {
+        return res.status(201).json(dataWrap(query));
+      } else {
+        return res.status(400).json(Error400);
+      }
+    } catch (e) {
+      return res.status(400).json(JSON.stringify(e));
     }
-  })
+  }
 
-  // remove dislike to a comment - ENDPOINT TESTED
-  .delete(verifyUser, async (req: GetUserSession, res: Response) => {
+  static async deleteLikeOrDislike(
+    req: GetUserSession,
+    res: Response,
+    next: NextFunction,
+    publishType: 'COMMENT' | 'POST',
+  ) {
     try {
+      const publishId =
+        publishType === 'COMMENT'
+          ? Number(req.params.commentid)
+          : Number(req.params.postid);
+
       const query = await deleteLikeOrDisLike(
         Number(req.user?.id),
-        Number(req.params.commentid),
-        'COMMENT',
+        publishId,
+        publishType,
       );
-      res.status(201).json(dataWrap(query));
-    } catch (error) {
-      res.status(400).end();
+
+      if (query) {
+        return res.status(201).json(dataWrap(query));
+      } else {
+        return res.status(400).json(Error400);
+      }
+    } catch (e) {
+      return res.status(400).json(JSON.stringify(e));
     }
-  });
+  }
+}
