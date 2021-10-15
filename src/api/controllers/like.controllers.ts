@@ -30,7 +30,7 @@ export class LikeControl {
         return res.status(400).json(Error400);
       }
     } catch (e) {
-      return res.status(400).json(JSON.stringify(e));
+      return res.status(400).json(e);
     }
   }
 
@@ -58,7 +58,7 @@ export class LikeControl {
         return res.status(400).json(Error400);
       }
     } catch (e) {
-      return res.status(400).json(JSON.stringify(e));
+      return res.status(400).json(e);
     }
   }
 
@@ -86,7 +86,7 @@ export class LikeControl {
         return res.status(400).json(Error400);
       }
     } catch (e) {
-      return res.status(400).json(JSON.stringify(e));
+      return res.status(400).json(e);
     }
   }
 }

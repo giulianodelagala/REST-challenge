@@ -22,7 +22,7 @@ export class PostControl {
         return res.status(404).json(Error404);
       }
     } catch (e) {
-      return res.status(400).json(JSON.stringify(e));
+      return res.status(400).json(e);
     }
   }
 
@@ -36,7 +36,7 @@ export class PostControl {
         return res.status(404).json(Error404);
       }
     } catch (e) {
-      return res.status(400).json(JSON.stringify(e));
+      return res.status(400).json(e);
     }
   }
 
@@ -54,7 +54,7 @@ export class PostControl {
         return res.status(404).json(Error404);
       }
     } catch (e) {
-      return res.status(400).json(JSON.stringify(e));
+      return res.status(400).json(e);
     }
   }
 
@@ -72,7 +72,7 @@ export class PostControl {
         return res.status(404).json(Error404);
       }
     } catch (e) {
-      return res.status(400).json(JSON.stringify(e));
+      return res.status(400).json(e);
     }
   }
 
@@ -89,7 +89,7 @@ export class PostControl {
         }
       }
     } catch (e) {
-      return res.status(400).json(JSON.stringify(e));
+      return res.status(400).json(e);
     }
   }
 
@@ -103,7 +103,7 @@ export class PostControl {
       const query = await updatePost(postId, req.body);
       next();
     } catch (e) {
-      return res.status(400).json(JSON.stringify(e));
+      return res.status(400).json(e);
     }
   }
 
@@ -126,7 +126,7 @@ export class PostControl {
       next();
 
     } catch (e) {
-      return res.status(400).json(JSON.stringify(e));
+      return res.status(400).json(e);
     }
   }
 }

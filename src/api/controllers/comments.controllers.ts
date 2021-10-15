@@ -25,7 +25,7 @@ export class CommentControl {
         return res.status(404).json(Error404);
       }
     } catch (e) {
-      return res.status(400).json(JSON.stringify(e));
+      return res.status(400).json(e);
     }
   }
 
@@ -47,7 +47,7 @@ export class CommentControl {
         return res.status(404).json(Error404);
       }
     } catch (e) {
-      return res.status(400).json(JSON.stringify(e));
+      return res.status(400).json(e);
     }
   }
 
@@ -68,7 +68,7 @@ export class CommentControl {
         return res.status(404).json(Error404);
       }
     } catch (e) {
-      return res.status(400).json(JSON.stringify(e));
+      return res.status(400).json(e);
     }
   }
 
@@ -92,7 +92,7 @@ export class CommentControl {
       const query = await deleteComment(commentId);
       next();
     } catch (e) {
-      return res.status(400).json(JSON.stringify(e));
+      return res.status(400).json(e);
     }
   }
 
@@ -112,7 +112,7 @@ export class CommentControl {
         return res.status(404).json(Error404);
       }
     } catch (e) {
-      return res.status(400).json(JSON.stringify(e));
+      return res.status(400).json(e);
     }
   }
 }

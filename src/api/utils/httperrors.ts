@@ -1,6 +1,3 @@
-import createError, { HttpError } from 'http-errors';
-import { response, Response } from 'express';
-
 export const Error400 = {
   title: 'Error: Bad Request',
   status: 400,
@@ -30,15 +27,3 @@ export const Error404 = {
   status: 404,
   message: 'Resource not found',
 };
-
-// export const resError = (err: HttpError) => {
-//   let res: Response = {
-//     status: {
-//       code: err.statusCode
-//     }
-//   }
-//   return ({
-//     title: 'Error',
-//     status: error.statusCode,
-//     message: error.message });
-// }

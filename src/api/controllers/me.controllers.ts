@@ -24,7 +24,7 @@ export class MeControl {
         return res.status(404).json(Error404);
       }
     } catch (e) {
-      return res.status(400).json(JSON.stringify(e));
+      return res.status(400).json(e);
     }
   }
 
@@ -38,7 +38,7 @@ export class MeControl {
       next()
       //this.getUserAccount(req, res, next);
     } catch (e) {
-      return res.status(400).json(JSON.stringify(e));
+      return res.status(400).json(e);
     }
   }
 
@@ -57,7 +57,7 @@ export class MeControl {
         return res.status(404).json(Error404);
       }
     } catch (e) {
-      return res.status(400).json(JSON.stringify(e));
+      return res.status(400).json(e);
     }
   }
 

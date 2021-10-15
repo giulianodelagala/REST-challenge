@@ -21,7 +21,7 @@ export class AuthControl {
       const token = authenticate.getToken({ _id: req.user?.id });
       return res.json({ token: token }).end();
     } catch (e) {
-      return res.status(400).json(JSON.stringify(e));
+      return res.status(400).json(e);
     }
   }
 
@@ -31,7 +31,7 @@ export class AuthControl {
 
       res.status(201).json({ validateAccount });
     } catch (e) {
-      return res.status(400).json(JSON.stringify(e));
+      return res.status(400).json(e);
     }
   }
 }
