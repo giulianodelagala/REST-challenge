@@ -44,14 +44,7 @@ export const createAccount = async (body: bodyAccountRequest) => {
   } catch (e) {
     console.error(e);
   }
-  console.log(upsertUser)
-  /*
-  const query = await prisma.users.create({
-    data: {
-      ...newBody,
-    },
-  });
-  console.log(query);*/
+
   return upsertUser;
 };
 
@@ -70,8 +63,8 @@ export const verifyAccount = async (body: bodyVerifyAccount) => {
 
   let confirmationResponse = null
 
-  console.log(userSelected.verifyCode);
-  console.log(body.verifyCode)
+  // console.log(userSelected.verifyCode);
+  // console.log(body.verifyCode)
 
   if (userSelected.verifyCode == body.verifyCode) {
     const updateUser = await prisma.users.update({
@@ -82,7 +75,7 @@ export const verifyAccount = async (body: bodyVerifyAccount) => {
         emailVerifiedAt: new Date(),
       },
     })
-    console.log(updateUser)
+    // console.log(updateUser)
     confirmationResponse = updateUser
   }
   return confirmationResponse
@@ -152,7 +145,8 @@ export const updateAccount = async (
       ...body,
     },
   });
-  console.log(query);
+  // console.log(query);
+  return query;
 };
 
 export const deleteAccount = async (id: number) => {
@@ -162,4 +156,5 @@ export const deleteAccount = async (id: number) => {
     },
   });
   // console.log(query);
+  return query;
 };
