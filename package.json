@@ -4,10 +4,11 @@
   "description": "RAVN Rest Challenge",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
-    "test:coverage": "jest --collect-coverage",
-    "test:watch": "jest --watchAll",
-    "dev": "nodemon --exec ts-node src/app.ts"
+    "test": "dotenv -e .env.test jest",
+    "test:coverage": "dotenv -e .env.test -- jest --coverage",
+    "test:watch": "dotenv -e .env.test -- jest --watchAll",
+    "dev": "dotenv -e .env.development nodemon --exec ts-node src/app.ts",
+    "migrate:test": "dotenv -e .env.test -- npx prisma migrate dev --name postgres-init"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"

@@ -11,7 +11,7 @@ type bodyRequest = {
 };
 
 type createBody = Omit<bodyRequest, 'id'>;
-type updateBody = Omit<bodyRequest, 'user'>;
+type updateBody = Partial<Omit<bodyRequest, 'user'>>;
 
 export const createPost = async (id: number,body: createBody) => {
   // console.log(body);
