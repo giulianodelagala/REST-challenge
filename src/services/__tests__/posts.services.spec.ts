@@ -1,4 +1,5 @@
 import { prismaMock } from '../../../singleton';
+import { getAllComments } from '../comments.services';
 import {
   createPost,
   deletePost,
@@ -86,9 +87,11 @@ describe('Post Services', () => {
   });
 
   test('should get a list a posts of a User', async () => {
-    const query = await getPostsOfUser(1);
+    const posts = await getPosts();
+    const query = await getPostsOfUser(posts[0].userId);
 
-    expect(query[0].userId).toBe(1);
-    await expect(getPostsOfUser(1)).resolves.toBeInstanceOf(Array);
+    query.forEach(element => {
+      expect(element.userId).toBe(posts[0].userId)
+    });
   });
 });

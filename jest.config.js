@@ -10,7 +10,7 @@ module.exports = {
   coverageThreshold: {
     './src/services/**/*.ts': {
       statements: 80,
-      branches: 80,
+      branches: 50,
       functions: 80,
       lines: 80,
     },

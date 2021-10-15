@@ -39,7 +39,6 @@ export const updateComment = async (commentId: number, body: UpdateBody) => {
       id: commentId,
     },
     data: {
-      // content: body.content,
       ...body,
     },
   });
@@ -55,23 +54,21 @@ export const deleteComment = async (commentId: number) => {
   return query;
 };
 
-export const showComment = async (id: number) => {
+export const getComment = async (id: number) => {
   const query = await prisma.comments.findUnique({
     where: {
       id: id,
     },
   });
-  //console.log(query)
   return query;
 };
 
-export const showAllComments = async () => {
+export const getAllComments = async () => {
   const query = await prisma.comments.findMany({
     orderBy: {
       updatedAt: 'desc',
     },
   });
-  console.log(query);
   return query;
 };
 
@@ -85,7 +82,6 @@ export const getCommentsOfPost = async (postId: number) => {
       updatedAt: 'desc',
     },
   });
-  // console.log(query);
   return query;
 };
 
@@ -102,6 +98,5 @@ export const getOneCommentOfPost = async (
       updatedAt: 'desc',
     },
   });
-  // console.log(query);
   return query;
 };

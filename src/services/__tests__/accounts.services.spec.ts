@@ -6,6 +6,7 @@ import {
   getOneAccount,
   getUserAccount,
   updateAccount,
+  verifyAccount,
 } from '../accounts.services';
 
 describe('Account Services', () => {
@@ -35,17 +36,15 @@ describe('Account Services', () => {
     });
   });
 
-  test('should create, update account info and delete', async () => {
+  test('should create, verify email token,update account info, and delete', async () => {
     const user = {
-      username: 'New User7',
+      username: 'New User10',
       password: '1234',
-      email: 'user+7@gmail.com',
+      email: 'user+10@gmail.com',
     };
     const newName = { name: 'New Name' };
 
-    const newUser = await createAccount(user);
-
-    expect(newUser).toEqual({
+    const info = {
       id: expect.any(Number),
       username: user.username,
       email: user.email,
@@ -58,36 +57,34 @@ describe('Account Services', () => {
       updatedAt: expect.any(Date),
       password: expect.any(String),
       emailVerifiedAt: null,
-    });
+    };
+
+    const newUser = await createAccount(user);
+
+    // User created
+    expect(newUser).toEqual(info);
+
+    // Verify email token
+    await expect(
+      verifyAccount({
+        password: user.password,
+        email: user.email,
+        verifyCode: String(newUser.verifyCode),
+      }),
+    ).resolves.toEqual({ ...info, emailVerifiedAt: expect.any(Date) });
 
     await expect(updateAccount(newUser.id, newName)).resolves.toEqual({
-      id: expect.any(Number),
-      username: newUser.username,
+      ...info,
       email: newUser.email,
       name: 'New Name',
-      isNamePublic: expect.any(Boolean),
-      isEmailPublic: expect.any(Boolean),
-      role: 'USER',
-      createdAt: expect.any(Date),
-      verifyCode: expect.any(String),
-      updatedAt: expect.any(Date),
-      password: expect.any(String),
-      emailVerifiedAt: null,
+      emailVerifiedAt: expect.any(Date),
     });
 
     await expect(deleteAccount(newUser.id)).resolves.toEqual({
-      id: expect.any(Number),
-      username: newUser.username,
+      ...info,
       email: newUser.email,
       name: 'New Name',
-      isNamePublic: expect.any(Boolean),
-      isEmailPublic: expect.any(Boolean),
-      role: 'USER',
-      createdAt: expect.any(Date),
-      verifyCode: expect.any(String),
-      updatedAt: expect.any(Date),
-      password: expect.any(String),
-      emailVerifiedAt: null,
+      emailVerifiedAt: expect.any(Date),
     });
   });
 });

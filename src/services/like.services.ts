@@ -1,6 +1,4 @@
 import { PrismaClient, PublishingType } from '@prisma/client';
-import { Sql } from '@prisma/client/runtime';
-import { threadId } from 'worker_threads';
 
 const prisma = new PrismaClient();
 
@@ -22,7 +20,6 @@ export const setLike = async (
   });
 
   const idSelected = findLikeId[0];
-  console.log(idSelected);
   let query = null;
 
   if (idSelected) {
@@ -35,7 +32,6 @@ export const setLike = async (
       },
     });
   } else {
-    console.log('no creado, lo creamos');
     query = await prisma.likeDislikes.create({
       data: {
         isLike: true,
@@ -50,20 +46,6 @@ export const setLike = async (
     });
   }
 
-  // if (query && idSelected.isLike == null) {
-  //   if (publishingType == 'COMMENT') {
-  //     const result: number = await prisma.$executeRawUnsafe(`UPDATE "Comments" 
-  //       SET like_counter = like_counter + 1
-  //       WHERE id = ${postOrCommentId};`);
-  //     console.log(result);
-  //   }
-  //   if (publishingType == 'POST') {
-  //     const result: number = await prisma.$executeRaw`UPDATE Pots 
-  //       SET like_counter = like_counter - 1 
-  //       WHERE id = ${postOrCommentId};`;
-  //     console.log(result);
-  //   }
-  // }
   return query;
 };
 
@@ -72,7 +54,6 @@ export const setDislike = async (
   postOrCommentId: number,
   publishingType: PublishingType,
 ) => {
-  console.log(userId, postOrCommentId, publishingType);
   const findLikeId = await prisma.likeDislikes.findMany({
     where: {
       userId: userId,
@@ -85,7 +66,6 @@ export const setDislike = async (
   });
 
   const idSelected = findLikeId[0];
-  console.log(idSelected);
   let query = null;
 
   if (idSelected) {
@@ -98,7 +78,6 @@ export const setDislike = async (
       },
     });
   } else {
-    console.log('no creado');
     query = await prisma.likeDislikes.create({
       data: {
         isLike: false,
