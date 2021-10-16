@@ -37,11 +37,11 @@ me.route('/')
 */
 // accounts/me/posts
 me.route('/posts')
-  // Create a Post
-  .post(auth.verifyUser, expressAsyncHandler(PostControl.createPost))
-
   // Returns a list of posts of user logged
-  .get(auth.verifyUser, expressAsyncHandler(PostControl.getPostsOfUser));
+  .get(auth.verifyUser, expressAsyncHandler(PostControl.getPostsOfUser))
+
+  // Create a Post
+  .post(auth.verifyUser, expressAsyncHandler(PostControl.createPost));
 
 // accounts/me/posts/:postid
 
