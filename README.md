@@ -1,25 +1,28 @@
 # REST-challenge
 RAVN Rest Challenge
 
-  ├── ...
-        ├── Curiocity_Time.*        # CURIOCITY base ontology
-        ├── ...
-        ├── Evaluation              # Scripts to evaluate ontologies
-        │   ├── OquaRE              # OQuaRE metrics
-        │   ├── Lexical             # Lexical 
-        │   └── ...
-        ├── Instances               # Instanced triplets 
-        │   ├── *.ttl               # Instances from museum data
-        │   ├── InstancesCombined   
-        │   │   ├── *_combined      # Instances + ontology + periods
-        │   │   ├── *_infer         # Instances + ontology + periods + inferred
-        │   └── ...
+## Folder Structure
 
-# Heroku deployment
+    ├── ...
+        ├── .*                      # Basic config files
+        ├── ...
+        ├── docs                    # API documentation
+        ├── prisma                  # prisma ORM files
+        ├── src                     # source code
+        │   ├── api                 # api REST code
+        │   │   ├── controllers     # 
+        │   │   ├── middlewares     # 
+        │   │   ├── routes          # 
+        │   │   ├── utils           # 
+        │   ├── config              # general config 
+        │   ├── services            # db logic n queries
+        │   └── ...
+        
+## Heroku deployment
 https://rest-api-blog-ravn.herokuapp.com
 
-# Postman documentation
-
+## Postman documentation
+https://documenter.getpostman.com/view/17815031/UV5UkzDE
 
 ## Group 3
 - Víctor Benavente
