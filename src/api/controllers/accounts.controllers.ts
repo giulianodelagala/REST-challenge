@@ -11,9 +11,9 @@ export class AccountControl {
   static async createAccount(req: Request, res: Response, next: NextFunction) {
     try {
       const query = await createAccount(req.body);
-      const send = { ...query, verifyCode: '---' };
+      //const send = { ...query, verifyCode: '---' };
       if (query) {
-        return res.status(201).json(dataWrap(send));
+        return res.status(201).json(dataWrap(query));
       } else {
         return res.status(403).json(Error403);
       }
