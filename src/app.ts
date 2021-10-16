@@ -11,6 +11,7 @@ const pass = require('./api/middlewares/passport.middle');
 const auth = require('./api/middlewares/auth.middle');
 
 const app = express();
+app.set('port', process.env.PORT || 5000);
 
 app.use(morgan('dev'));
 app.use(express.json());
@@ -21,7 +22,7 @@ app.use(require('body-parser').urlencoded({ extended: true }));
 
 import cors, { CorsOptions } from 'cors';
 
-const whiteList = ['http://localhost:3000'];
+const whiteList = ['http://localhost:5000'];
 const corsOptionsDelegate = function handler(
   req: Request,
   callback: (err: Error | null, options?: CorsOptions) => void,
@@ -41,8 +42,16 @@ app.use(passport.initialize());
 // Defining routes
 app.use('/', router(app));
 
-const server = app.listen(3000, () =>
-  console.log(`
-🚀 Server ready at: http://localhost:3000
-⭐️ See sample requests: `),
-);
+app
+  .get('/', function (request, response) {
+    var result = 'App is running';
+    response.send(result);
+  })
+  .listen(app.get('port'), function () {
+    console.log(
+      `
+🚀 Server ready at: http://localhost:5000
+⭐️ See sample requests: https://documenter.getpostman.com/view/17815031/UV5UkzDE`,
+      app.get('port'),
+    );
+  });
