@@ -60,5 +60,4 @@ describe('Likes Services', () => {
       userId: 1,
     });
   });
-
 });

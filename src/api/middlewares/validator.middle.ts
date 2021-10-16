@@ -19,7 +19,6 @@ export async function validateAuthorPost(
       return res.status(403).json(Error403);
     }
     next();
-
   } catch (error) {
     next(error);
   }
@@ -32,7 +31,7 @@ export async function validateAuthorComment(
 ) {
   try {
     const postId = Number(req.params.postid);
-    const commentId = Number(req.params.commentid)
+    const commentId = Number(req.params.commentid);
     const record = await getOneCommentOfPost(postId, commentId);
 
     if (record[0].userId !== req.user?.id) {

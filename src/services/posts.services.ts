@@ -1,4 +1,4 @@
-import {PrismaClient} from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -13,18 +13,18 @@ type bodyRequest = {
 type createBody = Omit<bodyRequest, 'id'>;
 type updateBody = Partial<Omit<bodyRequest, 'user'>>;
 
-export const createPost = async (id: number,body: createBody) => {
-  // console.log(body);
+export const createPost = async (id: number, body: createBody) => {
   const query = await prisma.posts.create({
     data: {
       title: body.title,
       content: body.content,
       isPublished: body.isPublished,
       user: {
-        connect: {id: id},
+        connect: { id: id },
       },
     },
   });
+
   return query;
 };
 
@@ -39,6 +39,7 @@ export const updatePost = async (postId: number, body: updateBody) => {
       isPublished: body.isPublished,
     },
   });
+
   return query;
 };
 
@@ -48,6 +49,7 @@ export const deletePost = async (id: number) => {
       id: id,
     },
   });
+
   return query;
 };
 
@@ -57,7 +59,7 @@ export const getOnePost = async (id: number) => {
       id: id,
     },
   });
-  // console.log(query);
+
   return query;
 };
 
@@ -70,7 +72,7 @@ export const getPosts = async () => {
       updatedAt: 'desc',
     },
   });
-  // console.log(query);
+
   return query;
 };
 
@@ -84,6 +86,6 @@ export const getPostsOfUser = async (userId: number) => {
       updatedAt: 'desc',
     },
   });
-  // console.log(query);
+
   return query;
 };

@@ -1,4 +1,8 @@
 node_modules
 # Keep environment variables out of version control
-.env
+.env.development
+.env.test
 coverage
+src/api/controllers/reports.controllers copy.ts
+src/services/LikeUpdateComments copy.ts
+src/services/reports.services copy.ts

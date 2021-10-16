@@ -5,10 +5,10 @@ import { commentPosts } from './api/routes/comments.routes';
 
 import { me } from './api/routes/me.routes';
 import { accountsPosts, posts } from './api/routes/posts.routes';
-import {
-  commentReports,
-  postReports,
-} from './api/controllers/reports.controllers';
+// import {
+//   commentReports,
+//   postReports,
+// } from './api/controllers/reports.controllers';
 import {
   commentDislike,
   commentLike,
@@ -20,8 +20,8 @@ const expressRouter = Router();
 
 export function router(app: Router): Router {
   app.use('/accounts/me', me);
-  app.use('/accounts/me/posts', postReports);
-  app.use('/accounts/me/comments', commentReports);
+  //app.use('/accounts/me/posts', postReports);
+  //app.use('/accounts/me/comments', commentReports);
 
   app.use('/accounts/me', [commentDislike, commentLike]);
   app.use('/accounts/me', [postLike, postDislike]);

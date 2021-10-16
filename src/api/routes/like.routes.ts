@@ -13,25 +13,39 @@ commentLike
   .route('/posts/:postid/comments/:commentid/like')
 
   // Give like to a comment - ENDPOINT TESTED
-  .patch(verifyUser, async (req: Request, res: Response, next: NextFunction) => {
-    await LikeControl.setLike(req, res, next, 'COMMENT')
-  })
+  .patch(
+    verifyUser,
+    async (req: Request, res: Response, next: NextFunction) => {
+      await LikeControl.setLike(req, res, next, 'COMMENT');
+    },
+  )
 
   // Remove like to a comment - ENDPOINT TESTED
-  .delete(verifyUser, async (req: Request, res: Response, next: NextFunction) => {
-     await LikeControl.deleteLikeOrDislike(req, res, next, 'COMMENT')});
+  .delete(
+    verifyUser,
+    async (req: Request, res: Response, next: NextFunction) => {
+      await LikeControl.deleteLikeOrDislike(req, res, next, 'COMMENT');
+    },
+  );
 
 commentDislike
   .route('/posts/:postid/comments/:commentid/dislike')
 
   // Give like to a comment - ENDPOINT TESTED
-  .patch(verifyUser, async (req: Request, res: Response, next: NextFunction) => {
-    await LikeControl.setDislike(req, res, next, 'COMMENT')
-  })
+  .patch(
+    verifyUser,
+    async (req: Request, res: Response, next: NextFunction) => {
+      await LikeControl.setDislike(req, res, next, 'COMMENT');
+    },
+  )
 
   // Remove like to a comment - ENDPOINT TESTED
-  .delete(verifyUser, async (req: Request, res: Response, next: NextFunction) => {
-     await LikeControl.deleteLikeOrDislike(req, res, next, 'COMMENT')});
+  .delete(
+    verifyUser,
+    async (req: Request, res: Response, next: NextFunction) => {
+      await LikeControl.deleteLikeOrDislike(req, res, next, 'COMMENT');
+    },
+  );
 
 /* Post */
 

@@ -6,14 +6,7 @@ import bcrypt from 'bcrypt';
 
 import { PrismaClient } from '@prisma/client';
 
-import { UserId } from '../../models/models';
 import { config } from '../../config/config';
-import { NextFunction, Request, Response } from 'express';
-import {
-  GetExpressUserId,
-  GetUserRoleRequest,
-  GetUserSession,
-} from '../utils/definitions';
 
 const prisma = new PrismaClient();
 
@@ -79,20 +72,6 @@ export const jwtPassport = passport.use(
     }
   }),
 );
-
-export const verifyAdmin = (
-  req: GetUserRoleRequest,
-  res: Response,
-  next: NextFunction,
-) => {
-  if (req.user?.role === 'MODERATOR') {
-    return next();
-  } else {
-    const err = new Error('You are not authorized');
-    res.statusCode = 403;
-    return next(err);
-  }
-};
 
 /**
  * Sign in using Email and Password.

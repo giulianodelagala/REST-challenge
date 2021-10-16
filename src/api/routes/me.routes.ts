@@ -89,5 +89,5 @@ me.route('/posts/:postid/comments/:commentid')
   .delete(
     auth.verifyUser,
     validateAuthorComment,
-    expressAsyncHandler(CommentControl.deleteComment)
+    expressAsyncHandler(CommentControl.deleteComment),
   );

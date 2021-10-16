@@ -91,6 +91,7 @@ export const setDislike = async (
       },
     });
   }
+
   return query;
 };
 
@@ -116,5 +117,6 @@ export const deleteLikeOrDisLike = async (
       id: idSelected.id,
     },
   });
+
   return query;
 };

@@ -19,7 +19,7 @@ type bodyVerifyAccount = {
   password: string;
   email: string;
   verifyCode: string;
-}
+};
 
 export const createAccount = async (body: bodyAccountRequest) => {
   const cryptPassword = bcrypt.hashSync(body.password, saltRounds);
@@ -36,7 +36,7 @@ export const createAccount = async (body: bodyAccountRequest) => {
       verifyCode: newBody.verifyCode,
     },
     create: {
-      ...newBody
+      ...newBody,
     },
   });
   try {
@@ -52,7 +52,7 @@ export const verifyAccount = async (body: bodyVerifyAccount) => {
   const findUserNotVerified = await prisma.users.findMany({
     where: {
       email: body.email,
-      emailVerifiedAt: null
+      emailVerifiedAt: null,
     },
     select: {
       id: true,
@@ -60,11 +60,7 @@ export const verifyAccount = async (body: bodyVerifyAccount) => {
     },
   });
   const userSelected = findUserNotVerified[0];
-
-  let confirmationResponse = null
-
-  // console.log(userSelected.verifyCode);
-  // console.log(body.verifyCode)
+  let confirmationResponse = null;
 
   if (userSelected.verifyCode == body.verifyCode) {
     const updateUser = await prisma.users.update({
@@ -74,11 +70,11 @@ export const verifyAccount = async (body: bodyVerifyAccount) => {
       data: {
         emailVerifiedAt: new Date(),
       },
-    })
-    // console.log(updateUser)
-    confirmationResponse = updateUser
+    });
+    confirmationResponse = updateUser;
   }
-  return confirmationResponse
+
+  return confirmationResponse;
 };
 
 export const getAccounts = async () => {
@@ -93,7 +89,7 @@ export const getAccounts = async () => {
       updatedAt: 'asc',
     },
   });
-  // console.log(query);
+
   return query;
 };
 
@@ -109,7 +105,7 @@ export const getOneAccount = async (id: number) => {
       role: true,
     },
   });
-  // console.log(query);
+
   return query;
 };
 
@@ -118,7 +114,7 @@ export const getUserAccount = async (id: number) => {
     where: {
       id: id,
     },
-    select : {
+    select: {
       password: false,
       username: true,
       name: true,
@@ -126,12 +122,11 @@ export const getUserAccount = async (id: number) => {
       isEmailPublic: true,
       role: true,
       createdAt: true,
-    }
+    },
   });
-  // console.log(query);
+
   return query;
 };
-
 
 export const updateAccount = async (
   id: number,
@@ -145,7 +140,7 @@ export const updateAccount = async (
       ...body,
     },
   });
-  // console.log(query);
+
   return query;
 };
 
@@ -155,6 +150,6 @@ export const deleteAccount = async (id: number) => {
       id: id,
     },
   });
-  // console.log(query);
+
   return query;
 };

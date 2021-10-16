@@ -30,6 +30,7 @@ export const createComment = async (
       },
     },
   });
+
   return query;
 };
 
@@ -42,6 +43,7 @@ export const updateComment = async (commentId: number, body: UpdateBody) => {
       ...body,
     },
   });
+
   return query;
 };
 
@@ -51,6 +53,7 @@ export const deleteComment = async (commentId: number) => {
       id: commentId,
     },
   });
+
   return query;
 };
 
@@ -60,6 +63,7 @@ export const getComment = async (id: number) => {
       id: id,
     },
   });
+
   return query;
 };
 
@@ -69,6 +73,7 @@ export const getAllComments = async () => {
       updatedAt: 'desc',
     },
   });
+
   return query;
 };
 
@@ -82,6 +87,7 @@ export const getCommentsOfPost = async (postId: number) => {
       updatedAt: 'desc',
     },
   });
+
   return query;
 };
 
@@ -98,5 +104,6 @@ export const getOneCommentOfPost = async (
       updatedAt: 'desc',
     },
   });
+
   return query;
 };

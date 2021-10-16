@@ -2,6 +2,7 @@ import { NextFunction, Request, Response, Router } from 'express';
 import expressAsyncHandler from 'express-async-handler';
 
 import { PostControl } from '../controllers/posts.controllers';
+import { verifyAdmin, verifyUser } from '../middlewares/auth.middle';
 
 export const posts = Router();
 export const accountsPosts = Router();
@@ -17,32 +18,6 @@ posts
   // Returns a single post
   .get(expressAsyncHandler(PostControl.getOnePost));
 
-// Delete an existing post
-// // TODO verifyAdmin
-// .delete(
-//   auth.verifyUser,
-//   async (req: GetUserSession, res: Response, next: NextFunction) => {
-//     try {
-//       const record = await getOnePost(Number(req.params.postid));
-
-//       // Verify if User is author
-//       if (record?.userId !== req.user?.id) {
-//         return next(createHttpError(403, 'You are not authorized'));
-//       }
-
-//       const query = await deletePost(Number(req.params.postid));
-
-//       res.status(200).json({ data: { record } });
-//     } catch (e) {
-//       // if (res.statusCode === 403) {
-//       //   res.end();
-//       // }
-//       // res.status(400).end();
-//       res.end();
-//     }
-//   },
-// );
-
 // accounts/:accountid/posts
 accountsPosts
   .route('/:accountid/posts')
@@ -52,4 +27,7 @@ accountsPosts
 accountsPosts
   .route('/:accountid/posts/:postid')
   // Returns a specific post of a specific user
-  .get(expressAsyncHandler(PostControl.getOnePost));
+  .get(expressAsyncHandler(PostControl.getOnePost))
+
+  // Delete Post by Moderator user
+  .delete(verifyUser, verifyAdmin, expressAsyncHandler(PostControl.deletePost));

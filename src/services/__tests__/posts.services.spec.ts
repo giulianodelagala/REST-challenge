@@ -91,7 +91,7 @@ describe('Post Services', () => {
     const query = await getPostsOfUser(posts[0].userId);
 
     query.forEach(element => {
-      expect(element.userId).toBe(posts[0].userId)
+      expect(element.userId).toBe(posts[0].userId);
     });
   });
 });

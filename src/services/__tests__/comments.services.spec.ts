@@ -44,7 +44,7 @@ describe('Comments Services', () => {
     const query = await getCommentsOfPost(comments[0].postId);
 
     query.forEach(element => {
-      expect(element.postId).toBe(comments[0].postId)
+      expect(element.postId).toBe(comments[0].postId);
     });
   });
 
@@ -53,7 +53,6 @@ describe('Comments Services', () => {
     const query = await getOneCommentOfPost(comments[0].postId, comments[0].id);
 
     expect(query[0].postId).toBe(comments[0].postId);
-
   });
 
   test('should update a comment', async () => {
